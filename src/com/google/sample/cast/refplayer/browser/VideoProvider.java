@@ -80,6 +80,9 @@ public class VideoProvider {
         try {
             java.net.URL url = new java.net.URL(urlString);
             URLConnection urlConnection = url.openConnection();
+            String token = "54sSDw1A2As7";
+            urlConnection.setRequestProperty("token", token);
+            Log.d(TAG, "parseUrl: Creating connection");
             is = new BufferedInputStream(urlConnection.getInputStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     urlConnection.getInputStream(), "iso-8859-1"), 1024);
@@ -89,6 +92,7 @@ public class VideoProvider {
                 sb.append(line);
             }
             String json = sb.toString();
+            Log.d(TAG, "parseUrl: JSON:" + json);
             return new JSONObject(json);
         } catch (Exception e) {
             Log.e(TAG, "Failed to parse the json for media list", e);

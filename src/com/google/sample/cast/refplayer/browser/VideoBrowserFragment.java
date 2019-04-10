@@ -24,6 +24,7 @@ import com.google.sample.cast.refplayer.R;
 import com.google.sample.cast.refplayer.mediaplayer.LocalPlayerActivity;
 import com.google.sample.cast.refplayer.utils.Utils;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -50,7 +51,7 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
 
     private static final String TAG = "VideoBrowserFragment";
     private static final String CATALOG_URL =
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/f.json";
+            "http://192.168.1.114:2019/api/radioGrill";
     private RecyclerView mRecyclerView;
     private VideoListAdapter mAdapter;
     private View mEmptyView;
@@ -67,6 +68,7 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         return inflater.inflate(R.layout.video_browser_fragment, container, false);
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
