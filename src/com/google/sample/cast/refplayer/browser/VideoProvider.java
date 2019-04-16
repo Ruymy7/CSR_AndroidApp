@@ -19,11 +19,14 @@ import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaTrack;
 import com.google.android.gms.common.images.WebImage;
+import com.google.sample.cast.refplayer.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.util.Log;
 
@@ -45,8 +48,8 @@ public class VideoProvider {
 
     private static final String TAG = "VideoProvider";
     private static final String TAG_VIDEOS = "videos";
-    private static final String TAG_HLS = "hls";
-    private static final String TAG_DASH = "dash";
+    //private static final String TAG_HLS = "hls";
+    //private static final String TAG_DASH = "dash";
     private static final String TAG_MP4 = "mp4";
     private static final String TAG_IMAGES = "images";
     private static final String TAG_VIDEO_TYPE = "type";
@@ -72,7 +75,7 @@ public class VideoProvider {
 
     public static final String KEY_DESCRIPTION = "description";
 
-    private static final String TARGET_FORMAT = TAG_HLS;
+    private static final String TARGET_FORMAT = TAG_MP4;
     private static List<MediaInfo> mediaList;
 
     protected JSONObject parseUrl(String urlString) {
@@ -80,8 +83,6 @@ public class VideoProvider {
         try {
             java.net.URL url = new java.net.URL(urlString);
             URLConnection urlConnection = url.openConnection();
-            String token = "54sSDw1A2As7";
-            urlConnection.setRequestProperty("token", token);
             Log.d(TAG, "parseUrl: Creating connection");
             is = new BufferedInputStream(urlConnection.getInputStream());
             BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -120,11 +121,9 @@ public class VideoProvider {
         if (null != categories) {
             for (int i = 0; i < categories.length(); i++) {
                 JSONObject category = categories.getJSONObject(i);
-                urlPrefixMap.put(TAG_HLS, category.getString(TAG_HLS));
-                urlPrefixMap.put(TAG_DASH, category.getString(TAG_DASH));
                 urlPrefixMap.put(TAG_MP4, category.getString(TAG_MP4));
                 urlPrefixMap.put(TAG_IMAGES, category.getString(TAG_IMAGES));
-                urlPrefixMap.put(TAG_TRACKS, category.getString(TAG_TRACKS));
+                //urlPrefixMap.put(TAG_TRACKS, category.getString(TAG_TRACKS));
                 category.getString(TAG_NAME);
                 JSONArray videos = category.getJSONArray(TAG_VIDEOS);
                 if (null != videos) {

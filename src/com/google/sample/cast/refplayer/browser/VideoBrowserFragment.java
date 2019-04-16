@@ -51,7 +51,7 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
 
     private static final String TAG = "VideoBrowserFragment";
     private static final String CATALOG_URL =
-            "http://192.168.1.114:2019/api/radioGrill";
+            "http://127.0.0.1:2019/api/radioGrill";
     private RecyclerView mRecyclerView;
     private VideoListAdapter mAdapter;
     private View mEmptyView;
