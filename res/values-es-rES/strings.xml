@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Campus Sur Radio</string>
+    <string name="reload">Recargar</string>
+    <string name="refreshing">Refrescando...</string>
     <string name="action_settings">Ajustes</string>
     <string name="media_route_menu_title">Reproducir en&#8230;</string>
     <string name="list_of_videos">Elige un clip de vídeo</string>

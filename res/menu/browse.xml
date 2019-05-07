@@ -18,17 +18,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/action_show_queue"
-        android:icon="@drawable/ic_playlist_white_24dp"
-        android:title="@string/show_queue"
-        android:orderInCategory="100"
-        app:showAsAction="always" />
+        android:id="@+id/action_reload_grill"
+        android:title="@string/reload"
+        android:icon="@drawable/quantum_ic_refresh_white_24"
+        app:showAsAction="always"
+        />
     <item
         android:id="@+id/media_route_menu_item"
         android:title="@string/media_route_menu_title"
         app:actionProviderClass="androidx.mediarouter.app.MediaRouteActionProvider"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_show_queue"
+        android:icon="@drawable/ic_playlist_white_24dp"
+        android:title="@string/show_queue"
         android:orderInCategory="101"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="102"

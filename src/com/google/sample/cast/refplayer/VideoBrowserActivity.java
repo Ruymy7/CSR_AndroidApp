@@ -36,6 +36,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 /**
  * The main activity that displays the list of videos.
@@ -49,6 +50,7 @@ public class VideoBrowserActivity extends AppCompatActivity {
     private CastSession mCastSession;
     private MenuItem mediaRouteMenuItem;
     private MenuItem mQueueMenuItem;
+    private MenuItem reloadMenuItem;
     private Toolbar mToolbar;
     private IntroductoryOverlay mIntroductoryOverlay;
     private CastStateListener mCastStateListener;
@@ -123,7 +125,7 @@ public class VideoBrowserActivity extends AppCompatActivity {
     }
 
     private void setupActionBar() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
     }
 
@@ -134,6 +136,7 @@ public class VideoBrowserActivity extends AppCompatActivity {
         mediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu,
                 R.id.media_route_menu_item);
         mQueueMenuItem = menu.findItem(R.id.action_show_queue);
+        reloadMenuItem = menu.findItem(R.id.action_reload_grill);
         showIntroductoryOverlay();
         return true;
     }
@@ -154,6 +157,9 @@ public class VideoBrowserActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_show_queue) {
             intent = new Intent(VideoBrowserActivity.this, QueueListViewActivity.class);
             startActivity(intent);
+        } else if (item.getItemId() == R.id.action_reload_grill) {
+            Toast.makeText(this, R.string.refreshing, Toast.LENGTH_SHORT).show();
+
         }
         return true;
     }
