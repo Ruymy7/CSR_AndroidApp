@@ -2,8 +2,10 @@
 <resources>
     <string name="app_name">Campus Sur Radio</string>
     <string name="reload">Recargar</string>
-    <string name="refreshing">Refrescando...</string>
+    <string name="refreshing">Refrescando…</string>
     <string name="action_settings">Ajustes</string>
+    <string name="actions_share">Compartir con amigos</string>
+    <string name="shareWith">Compartir con…</string>
     <string name="media_route_menu_title">Reproducir en&#8230;</string>
     <string name="list_of_videos">Elige un clip de vídeo</string>
     <string name="no_device">(Ningún dispositivo seleccionado)</string>
@@ -14,7 +16,7 @@
     <string name="queue_item_added_to_queue">Se ha añadido un elemento a la cola</string>
     <string name="queue_item_added_to_play_next">Se ha añadido un elemento a continuación</string>
     <string name="action_clear_queue">Cola vacía</string>
-    <string name="add_to_queue">Añadido a la cola</string>
+    <string name="add_to_queue">Añadir a la cola</string>
     <string name="play_next">Reproducir siguiente</string>
     <string name="play_now">Reproducir ahora</string>
     <string name="queue_empty">¡La cola está vacía!</string>

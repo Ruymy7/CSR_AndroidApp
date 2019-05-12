@@ -30,6 +30,10 @@
         android:orderInCategory="101"
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_share"
+        android:title="@string/actions_share"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         app:showAsAction="never" />

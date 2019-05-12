@@ -161,7 +161,7 @@ public class VideoBrowserActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.refreshing, Toast.LENGTH_SHORT).show();
 
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -27,6 +27,7 @@ import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.android.gms.cast.framework.media.MediaUtils;
 import com.google.android.gms.cast.framework.media.RemoteMediaClient;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.sample.cast.refplayer.utils.CustomVolleyRequest;
 import com.google.sample.cast.refplayer.R;
 import com.google.sample.cast.refplayer.browser.VideoProvider;
@@ -62,6 +63,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -69,6 +71,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.util.Timer;
@@ -107,6 +110,8 @@ public class LocalPlayerActivity extends AppCompatActivity {
     private SessionManagerListener<CastSession> mSessionManagerListener;
     private MenuItem mQueueMenuItem;
     private ImageLoader mImageLoader;
+    private FloatingActionButton mShare;
+
 
     /**
      * indicates whether we are doing a local or a remote playback
@@ -130,6 +135,7 @@ public class LocalPlayerActivity extends AppCompatActivity {
         loadViews();
         setupControlsCallbacks();
         setupCastListener();
+
         mCastContext = CastContext.getSharedInstance(this);
         mCastSession = mCastContext.getSessionManager().getCurrentCastSession();
         // see what we need to play and where
@@ -600,6 +606,19 @@ public class LocalPlayerActivity extends AppCompatActivity {
                 }
             }
         });
+
+        mShare.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(Intent.ACTION_SEND);
+                myIntent.setType("text/plain");
+                String shareBody = "Estoy escuchando Campus Sur Radio, escúchalo aquí: " + mSelectedMedia.getContentId();
+                String shareSub = "Campus Sur Radio";
+                myIntent.putExtra(Intent.EXTRA_SUBJECT, shareSub);
+                myIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(myIntent, getString(R.string.shareWith)));
+            }
+        });
     }
 
     private void updateSeekbar(int position, int duration) {
@@ -733,6 +752,14 @@ public class LocalPlayerActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (item.getItemId() == android.R.id.home) {
             ActivityCompat.finishAfterTransition(this);
+        } else if (item.getItemId() == R.id.action_share) {
+            Intent myIntent = new Intent(Intent.ACTION_SEND);
+            myIntent.setType("text/plain");
+            String shareBody = "Estoy escuchando Campus Sur Radio, escúchalo aquí: " + mSelectedMedia.getContentId();
+            String shareSub = "Campus Sur Radio";
+            myIntent.putExtra(Intent.EXTRA_SUBJECT, shareSub);
+            myIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(myIntent, getString(R.string.shareWith)));
         }
         return true;
     }
@@ -767,5 +794,6 @@ public class LocalPlayerActivity extends AppCompatActivity {
                 togglePlayback();
             }
         });
+        mShare = (FloatingActionButton) findViewById(R.id.button_share);
     }
 }
