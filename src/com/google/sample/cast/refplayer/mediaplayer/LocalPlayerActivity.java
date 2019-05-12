@@ -612,7 +612,7 @@ public class LocalPlayerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent myIntent = new Intent(Intent.ACTION_SEND);
                 myIntent.setType("text/plain");
-                String shareBody = "Estoy escuchando Campus Sur Radio, escúchalo aquí: " + mSelectedMedia.getContentId();
+                String shareBody = getString(R.string.share_text) + " " + mSelectedMedia.getContentId();
                 String shareSub = "Campus Sur Radio";
                 myIntent.putExtra(Intent.EXTRA_SUBJECT, shareSub);
                 myIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
@@ -755,7 +755,7 @@ public class LocalPlayerActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_share) {
             Intent myIntent = new Intent(Intent.ACTION_SEND);
             myIntent.setType("text/plain");
-            String shareBody = "Estoy escuchando Campus Sur Radio, escúchalo aquí: " + mSelectedMedia.getContentId();
+            String shareBody = getString(R.string.share_text) + " " + mSelectedMedia.getContentId();
             String shareSub = "Campus Sur Radio";
             myIntent.putExtra(Intent.EXTRA_SUBJECT, shareSub);
             myIntent.putExtra(Intent.EXTRA_TEXT, shareBody);

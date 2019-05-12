@@ -25,6 +25,7 @@
     <string name="refreshing">Refreshing…</string>
     <string name="actions_share">Share with friends</string>
     <string name="shareWith">Share with…</string>
+    <string name="share_text">I\'m listening to Campus Sur Radio, listen here:</string>
     <string name="app_name">Campus Sur Radio</string>
     <string name="app_id" translatable="false">679EAD22</string>
     <string name="action_settings">Settings</string>
