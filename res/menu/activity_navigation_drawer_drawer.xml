@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_podcasts"
+            android:icon="@drawable/ic_av_play_over_video"
+            android:title="@string/menu_podcasts" />
+        <item
+            android:id="@+id/nav_live_radio"
+            android:icon="@mipmap/icons8_radio"
+            android:title="@string/menu_live_radio" />
+    </group>
+
+    <item android:title="@string/other">
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/nav_settings"
+                    android:icon="@drawable/ic_menu_manage"
+                    android:title="@string/action_settings" />
+                <item
+                    android:id="@+id/nav_share"
+                    android:icon="@drawable/ic_menu_share"
+                    android:title="@string/actions_share" />
+            </group>
+        </menu>
+    </item>
+
+</menu>

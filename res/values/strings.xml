@@ -24,8 +24,11 @@
     <string name="reload">Reload</string>
     <string name="refreshing">Refreshing…</string>
     <string name="actions_share">Share with friends</string>
+    <string name="other">Other</string>
     <string name="shareWith">Share with…</string>
     <string name="share_text">I\'m listening to Campus Sur Radio, listen here:</string>
+    <string name="menu_live_radio">Live radio</string>
+    <string name="menu_podcasts" translatable="false">Podcasts</string>
     <string name="app_name">Campus Sur Radio</string>
     <string name="app_id" translatable="false">679EAD22</string>
     <string name="action_settings">Settings</string>
@@ -108,4 +111,17 @@
     <string name="queue_item_added_to_play_next">An item was added to play next</string>
     <string name="queue_item_added_to_queue">An item was added to the queue</string>
     <string name="title_activity_live_radio">LiveRadio</string>
+    <string name="title_activity_navigation_drawer">NavigationDrawer</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
 </resources>

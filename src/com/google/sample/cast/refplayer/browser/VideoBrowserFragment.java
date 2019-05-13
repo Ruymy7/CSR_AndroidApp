@@ -26,21 +26,26 @@ import com.google.sample.cast.refplayer.utils.Utils;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -88,6 +93,7 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         if (view instanceof ImageButton) {
             Utils.showQueuePopup(getActivity(), view, item);
         } else {
+
             String transitionName = getString(R.string.transition_image);
             VideoListAdapter.ViewHolder viewHolder =
                     (VideoListAdapter.ViewHolder) mRecyclerView.findViewHolderForPosition(position);
@@ -108,6 +114,14 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         return new VideoItemLoader(getActivity(), CATALOG_URL);
     }
 
+    public void refresh() {
+        Fragment currentFragment = getFragmentManager().findFragmentById(R.id.browse);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        if (Build.VERSION.SDK_INT >= 26) {
+            ft.setReorderingAllowed(false);
+        }
+        ft.detach(currentFragment).attach(currentFragment).commit();
+    }
     @Override
     public void onLoadFinished(Loader<List<MediaInfo>> loader, List<MediaInfo> data) {
         mAdapter.setData(data);

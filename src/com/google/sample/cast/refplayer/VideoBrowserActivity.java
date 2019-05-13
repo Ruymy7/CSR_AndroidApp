@@ -34,10 +34,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,7 +54,7 @@ import java.util.ArrayList;
 /**
  * The main activity that displays the list of videos.
  */
-public class VideoBrowserActivity extends AppCompatActivity {
+public class VideoBrowserActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "VideoBrowserActivity";
     private CastContext mCastContext;
@@ -62,6 +67,15 @@ public class VideoBrowserActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private IntroductoryOverlay mIntroductoryOverlay;
     private CastStateListener mCastStateListener;
+    private VideoBrowserFragment videoBrowserFragment;
+    private LiveRadio liveRadio;
+    public static LiveRadioPlayer liveRadioPlayer = new LiveRadioPlayer();
+    public static LiveState mLiveState = LiveState.PAUSE;
+
+    public enum LiveState {
+        PLAYING,
+        PAUSE
+    }
 
     private class MySessionManagerListener implements SessionManagerListener<CastSession> {
 
@@ -118,7 +132,7 @@ public class VideoBrowserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.video_browser);
+        setContentView(R.layout.activity_navigation_drawer);
         setupActionBar();
 
         mCastStateListener = new CastStateListener() {
@@ -135,6 +149,23 @@ public class VideoBrowserActivity extends AppCompatActivity {
     private void setupActionBar() {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -168,9 +199,37 @@ public class VideoBrowserActivity extends AppCompatActivity {
             startActivity(intent);
         } else if (item.getItemId() == R.id.action_reload_grill) {
             Toast.makeText(this, R.string.refreshing, Toast.LENGTH_SHORT).show();
-
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        Intent intent;
+
+        if (id == R.id.nav_share) {
+            Intent myIntent = new Intent(Intent.ACTION_SEND);
+            myIntent.setType("text/plain");
+            String shareBody = getString(R.string.share_text) + " http://csradio.ddns.net:2019" ;
+            String shareSub = "Campus Sur Radio";
+            myIntent.putExtra(Intent.EXTRA_SUBJECT, shareSub);
+            myIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(myIntent, getString(R.string.shareWith)));
+        } else if (id == R.id.nav_settings) {
+            intent = new Intent(VideoBrowserActivity.this, CastPreference.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_live_radio) {
+            intent = new Intent(VideoBrowserActivity.this, LiveRadio.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_podcasts) {
+            Toast.makeText(this, "Podcasts", Toast.LENGTH_SHORT).show();
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     @Override

@@ -7,6 +7,8 @@
     <string name="actions_share">Compartir con amigos</string>
     <string name="shareWith">Compartir con…</string>
     <string name="share_text">Estoy escuchando Campus Sur Radio, escúchalo aquí:</string>
+    <string name="menu_live_radio">Radio en directo</string>
+    <string name="other">Otros</string>
     <string name="media_route_menu_title">Reproducir en&#8230;</string>
     <string name="list_of_videos">Elige un clip de vídeo</string>
     <string name="no_device">(Ningún dispositivo seleccionado)</string>

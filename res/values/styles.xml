@@ -1,0 +1,11 @@
+<resources>
+
+    <style name="Theme.CastVideosTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.CastVideosTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.CastVideosTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+</resources>
