@@ -23,7 +23,10 @@ import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.cast.framework.CastStateListener;
 import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.cast.framework.SessionManagerListener;
+import com.google.android.material.navigation.NavigationView;
 import com.google.sample.cast.refplayer.browser.VideoBrowserFragment;
+import com.google.sample.cast.refplayer.liveradio.LiveRadio;
+import com.google.sample.cast.refplayer.liveradio.LiveRadioPlayer;
 import com.google.sample.cast.refplayer.queue.ui.QueueListViewActivity;
 import com.google.sample.cast.refplayer.settings.CastPreference;
 
@@ -34,12 +37,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
@@ -69,7 +72,7 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
     private CastStateListener mCastStateListener;
     private VideoBrowserFragment videoBrowserFragment;
     private LiveRadio liveRadio;
-    public static LiveRadioPlayer liveRadioPlayer = new LiveRadioPlayer();
+    public static LiveRadioPlayer liveRadioPlayer;
     public static LiveState mLiveState = LiveState.PAUSE;
 
     public enum LiveState {

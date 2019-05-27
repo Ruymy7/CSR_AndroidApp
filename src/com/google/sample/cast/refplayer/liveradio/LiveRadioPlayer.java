@@ -14,7 +14,7 @@ import java.io.IOException;
 
 import static com.android.volley.VolleyLog.TAG;
 
-public class LiveRadioPlayer extends Thread implements MediaPlayer.OnPreparedListener {
+public class LiveRadioPlayer extends Service implements MediaPlayer.OnPreparedListener {
     public static final String ACTION_PLAY = "com.liveRadioPlayer.action.PLAY";
     public static final String ACTION_PAUSE = "com.liveRadioPlayer.action.PAUSE";
     MediaPlayer mediaPlayer = null;
@@ -24,17 +24,24 @@ public class LiveRadioPlayer extends Thread implements MediaPlayer.OnPreparedLis
 
     }
 
-    public void run() {
-        try {
-            Log.d(TAG, "onStartCommand: STARTING");
-            mediaPlayer = new MediaPlayer(); // initialize it here
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.setDataSource(radio_url);
-            mediaPlayer.setOnPreparedListener(this);
-            mediaPlayer.prepareAsync(); // prepare async to not block main thread
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if(intent.getAction().equals(ACTION_PLAY)){
+            try {
+                Toast.makeText(this, "PLAY", Toast.LENGTH_SHORT).show();
+                mediaPlayer = new MediaPlayer();
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mediaPlayer.setDataSource(radio_url);
+                mediaPlayer.setOnPreparedListener(this);
+                mediaPlayer.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if(intent.getAction().equals(ACTION_PAUSE)){
+            Toast.makeText(this, "PAUSE", Toast.LENGTH_SHORT).show();
+            pause();
         }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Nullable
@@ -42,8 +49,17 @@ public class LiveRadioPlayer extends Thread implements MediaPlayer.OnPreparedLis
         return null;
     }
 
-    /** Called when MediaPlayer is ready */
-    public void onPrepared(MediaPlayer player) {
-        player.start();
+    public void pause() {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            if (mPlaybackInfoListener != null) {
+                mPlaybackInfoListener.onStateChanged(PlaybackInfoListener.State.PAUSED);
+            }
+        }
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        mediaPlayer.start();
     }
 }
