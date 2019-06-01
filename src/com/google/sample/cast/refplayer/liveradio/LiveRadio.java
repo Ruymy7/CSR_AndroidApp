@@ -8,14 +8,18 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +48,8 @@ import com.google.sample.cast.refplayer.settings.CastPreference;
 
 import java.io.IOException;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class LiveRadio extends Fragment {
 
     private static final String TAG = "LiveRadio";
@@ -54,6 +60,10 @@ public class LiveRadio extends Fragment {
     private TextView textView;
     private ImageView image_mute;
     private ImageView image_volume;
+    private String media = "http://server10.emitironline.com:10288/stream";
+    public static final String PREFS_NAME = "preferences";
+    public boolean serviceBound = false;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -63,20 +73,14 @@ public class LiveRadio extends Fragment {
 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        getButtons();
         setHasOptionsMenu(true);
-    }
-
-
-   /* @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        final Intent intent = null;
-        /*getButtons();
+        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+        serviceBound = settings.getBoolean("bounded", false);
+        getButtons();
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                play(intent);
+                play();
             }
         });
         pauseButton.setOnClickListener(new View.OnClickListener() {
@@ -130,8 +134,35 @@ public class LiveRadio extends Fragment {
                 }
             }
         });
-    }*/
+    }
 
+    //Binding this Client to the AudioPlayer Service
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            LiveRadioPlayer.LocalBinder binder = (LiveRadioPlayer.LocalBinder) service;
+            VideoBrowserActivity.player = binder.getService();
+            serviceBound = true;
+            SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean("bounded", serviceBound);
+            // Commit the edits!
+            editor.commit();
+
+            Toast.makeText(getContext(), R.string.loading, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceBound = false;
+            SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean("bounded", serviceBound);
+            // Commit the edits!
+            editor.commit();
+        }
+    };
 
     private void getButtons() {
         playButton = getView().findViewById(R.id.play_button);
@@ -140,8 +171,8 @@ public class LiveRadio extends Fragment {
         textView = getView().findViewById(R.id.text_liveRadio);
         image_mute = getView().findViewById(R.id.image_mute);
         image_volume = getView().findViewById(R.id.image_volume);
-        //audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        /*volumeBar.setMax(audioManager
+        audioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+        volumeBar.setMax(audioManager
                 .getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         volumeBar.setProgress(audioManager
                 .getStreamVolume(AudioManager.STREAM_MUSIC));
@@ -152,10 +183,10 @@ public class LiveRadio extends Fragment {
         } else {
             image_volume.setVisibility(View.VISIBLE);
             image_mute.setVisibility(View.GONE);
-        }*/
+        }
 
-        if(VideoBrowserActivity.mLiveState == VideoBrowserActivity.LiveState.PAUSE){
-            textView.setTextColor(getResources().getColor(R.color.red));
+        if(!serviceBound){
+            textView.setTextColor(getResources().getColor(R.color.black));
             playButton.setVisibility(View.VISIBLE);
             pauseButton.setVisibility(View.GONE);
         } else {
@@ -165,20 +196,19 @@ public class LiveRadio extends Fragment {
         }
     }
 
-    /*private void play(Intent intent) {
+    private void play() {
         playButton.setVisibility(View.GONE);
         pauseButton.setVisibility(View.VISIBLE);
         textView.setTextColor(getResources().getColor(R.color.red));
         Log.d(TAG, "play: ");
-        if(VideoBrowserActivity.mLiveState == VideoBrowserActivity.LiveState.PAUSE) {
-            Toast.makeText(this, R.string.loading, Toast.LENGTH_SHORT).show();
-            intent = new Intent(this, LiveRadioPlayer.class);
-            intent.setAction(LiveRadioPlayer.ACTION_PLAY);
-            startService(intent);
-            //VideoBrowserActivity.liveRadioPlayer;
-            VideoBrowserActivity.mLiveState = VideoBrowserActivity.LiveState.PLAYING;
+        if (!serviceBound) {
+            Intent playerIntent = new Intent(getContext(), LiveRadioPlayer.class);
+            playerIntent.putExtra("media", media);
+            getActivity().startService(playerIntent);
+            getActivity().bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         } else {
-            Toast.makeText(this, "Is Alive", Toast.LENGTH_SHORT).show();
+            //Service is active
+            //Send media with BroadcastReceiver
         }
     }
 
@@ -186,7 +216,13 @@ public class LiveRadio extends Fragment {
         playButton.setVisibility(View.VISIBLE);
         pauseButton.setVisibility(View.GONE);
         textView.setTextColor(getResources().getColor(R.color.black));
-        VideoBrowserActivity.mLiveState = VideoBrowserActivity.LiveState.PAUSE;
+        serviceBound = false;
+        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("bounded", serviceBound);
+        // Commit the edits!
+        editor.commit();
+        VideoBrowserActivity.player.onDestroy();
         //VideoBrowserActivity.liveRadioPlayer.stop();
-    }*/
+    }
 }

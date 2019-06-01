@@ -71,12 +71,8 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
     private Toolbar mToolbar;
     private IntroductoryOverlay mIntroductoryOverlay;
     private CastStateListener mCastStateListener;
-    public static LiveState mLiveState = LiveState.PAUSE;
-
-    public enum LiveState {
-        PLAYING,
-        PAUSE
-    }
+    private String currentFragment = "PODCASTS";
+    public static LiveRadioPlayer player;
 
     private class MySessionManagerListener implements SessionManagerListener<CastSession> {
 
@@ -177,6 +173,8 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
                 R.id.media_route_menu_item);
         mQueueMenuItem = menu.findItem(R.id.action_show_queue);
         reloadMenuItem = menu.findItem(R.id.action_reload_grill);
+        if(currentFragment != "PODCASTS")
+            reloadMenuItem.setVisible(false);
         showIntroductoryOverlay();
         return true;
     }
@@ -223,9 +221,13 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
         } else if (id == R.id.nav_settings) {
             intent = new Intent(VideoBrowserActivity.this, CastPreference.class);
             startActivity(intent);
+            invalidateOptionsMenu();
         } else if (id == R.id.nav_live_radio) {
+            currentFragment = "LIVERADIO";
             fragmentClass = LiveRadio.class;
+            invalidateOptionsMenu();
         } else if (id == R.id.nav_podcasts) {
+            currentFragment = "PODCASTS";
             fragmentClass = VideoBrowserFragment.class;
         }
 
@@ -233,8 +235,10 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
             if(fragmentClass != null) {
                 fragment = (Fragment) fragmentClass.newInstance();
                 for (int i = 0; i < fragmentList.size(); i++) {
-                    fragmentManager.beginTransaction().remove(fragmentList.get(i));
-                    fragmentList.get(i).onDestroy();
+                    if(fragmentList.get(i).getId() != R.id.cast_mini_controller) {
+                        fragmentManager.beginTransaction().remove(fragmentList.get(i));
+                        fragmentList.get(i).onDestroy();
+                    }
                 }
                 fragmentManager.beginTransaction()
                         .replace(R.id.browse, fragment)
