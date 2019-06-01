@@ -52,9 +52,9 @@ public class LiveRadioPlayer extends Service implements MediaPlayer.OnPreparedLi
     public void pause() {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
-            if (mPlaybackInfoListener != null) {
-                mPlaybackInfoListener.onStateChanged(PlaybackInfoListener.State.PAUSED);
-            }
+//            if (mPlaybackInfoListener != null) {
+//                mPlaybackInfoListener.onStateChanged(PlaybackInfoListener.State.PAUSED);
+//            }
         }
     }
 

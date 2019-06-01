@@ -41,7 +41,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.KeyEvent;
@@ -51,6 +53,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The main activity that displays the list of videos.
@@ -68,9 +71,6 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
     private Toolbar mToolbar;
     private IntroductoryOverlay mIntroductoryOverlay;
     private CastStateListener mCastStateListener;
-    private VideoBrowserFragment videoBrowserFragment;
-    private LiveRadio liveRadio;
-    public static LiveRadioPlayer liveRadioPlayer;
     public static LiveState mLiveState = LiveState.PAUSE;
 
     public enum LiveState {
@@ -207,6 +207,10 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Intent intent;
+        Class fragmentClass = null;
+        Fragment fragment = null;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        List<Fragment> fragmentList = fragmentManager.getFragments();
 
         if (id == R.id.nav_share) {
             Intent myIntent = new Intent(Intent.ACTION_SEND);
@@ -220,10 +224,24 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
             intent = new Intent(VideoBrowserActivity.this, CastPreference.class);
             startActivity(intent);
         } else if (id == R.id.nav_live_radio) {
-            intent = new Intent(VideoBrowserActivity.this, LiveRadio.class);
-            startActivity(intent);
+            fragmentClass = LiveRadio.class;
         } else if (id == R.id.nav_podcasts) {
-            Toast.makeText(this, "Podcasts", Toast.LENGTH_SHORT).show();
+            fragmentClass = VideoBrowserFragment.class;
+        }
+
+        try {
+            if(fragmentClass != null) {
+                fragment = (Fragment) fragmentClass.newInstance();
+                for (int i = 0; i < fragmentList.size(); i++) {
+                    fragmentManager.beginTransaction().remove(fragmentList.get(i));
+                    fragmentList.get(i).onDestroy();
+                }
+                fragmentManager.beginTransaction()
+                        .replace(R.id.browse, fragment)
+                        .commit();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

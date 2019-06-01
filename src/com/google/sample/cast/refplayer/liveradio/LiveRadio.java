@@ -1,9 +1,12 @@
 package com.google.sample.cast.refplayer.liveradio;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,12 +38,13 @@ import com.google.android.gms.cast.framework.IntroductoryOverlay;
 import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.sample.cast.refplayer.R;
 import com.google.sample.cast.refplayer.VideoBrowserActivity;
+import com.google.sample.cast.refplayer.browser.VideoListAdapter;
 import com.google.sample.cast.refplayer.queue.ui.QueueListViewActivity;
 import com.google.sample.cast.refplayer.settings.CastPreference;
 
 import java.io.IOException;
 
-public class LiveRadio extends AppCompatActivity {
+public class LiveRadio extends Fragment {
 
     private static final String TAG = "LiveRadio";
     private ImageButton playButton;
@@ -51,11 +56,23 @@ public class LiveRadio extends AppCompatActivity {
     private ImageView image_volume;
 
     @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.live_radio_fragment, container, false);
+    }
+
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getButtons();
+        setHasOptionsMenu(true);
+    }
+
+
+   /* @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Intent intent = null;
-        setContentView(R.layout.activity_live_radio);
-        getButtons();
+        /*getButtons();
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +110,7 @@ public class LiveRadio extends AppCompatActivity {
             }
         });
 
-        getApplicationContext().getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, new ContentObserver(new Handler()) {
+        getContext().getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, new ContentObserver(new Handler()) {
             @Override
             public boolean deliverSelfNotifications() {
                 return false;
@@ -113,18 +130,18 @@ public class LiveRadio extends AppCompatActivity {
                 }
             }
         });
-    }
+    }*/
 
 
     private void getButtons() {
-        playButton = findViewById(R.id.play_button);
-        pauseButton = findViewById(R.id.pause_button);
-        volumeBar = findViewById(R.id.volume_bar);
-        textView = findViewById(R.id.text_liveRadio);
-        image_mute = findViewById(R.id.image_mute);
-        image_volume = findViewById(R.id.image_volume);
-        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        volumeBar.setMax(audioManager
+        playButton = getView().findViewById(R.id.play_button);
+        pauseButton = getView().findViewById(R.id.pause_button);
+        volumeBar = getView().findViewById(R.id.volume_bar);
+        textView = getView().findViewById(R.id.text_liveRadio);
+        image_mute = getView().findViewById(R.id.image_mute);
+        image_volume = getView().findViewById(R.id.image_volume);
+        //audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        /*volumeBar.setMax(audioManager
                 .getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         volumeBar.setProgress(audioManager
                 .getStreamVolume(AudioManager.STREAM_MUSIC));
@@ -135,10 +152,10 @@ public class LiveRadio extends AppCompatActivity {
         } else {
             image_volume.setVisibility(View.VISIBLE);
             image_mute.setVisibility(View.GONE);
-        }
+        }*/
 
         if(VideoBrowserActivity.mLiveState == VideoBrowserActivity.LiveState.PAUSE){
-            textView.setTextColor(getResources().getColor(R.color.black));
+            textView.setTextColor(getResources().getColor(R.color.red));
             playButton.setVisibility(View.VISIBLE);
             pauseButton.setVisibility(View.GONE);
         } else {
@@ -148,7 +165,7 @@ public class LiveRadio extends AppCompatActivity {
         }
     }
 
-    private void play(Intent intent) {
+    /*private void play(Intent intent) {
         playButton.setVisibility(View.GONE);
         pauseButton.setVisibility(View.VISIBLE);
         textView.setTextColor(getResources().getColor(R.color.red));
@@ -171,5 +188,5 @@ public class LiveRadio extends AppCompatActivity {
         textView.setTextColor(getResources().getColor(R.color.black));
         VideoBrowserActivity.mLiveState = VideoBrowserActivity.LiveState.PAUSE;
         //VideoBrowserActivity.liveRadioPlayer.stop();
-    }
+    }*/
 }

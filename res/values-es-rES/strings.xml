@@ -13,7 +13,7 @@
     <string name="list_of_videos">Elige un clip de vídeo</string>
     <string name="no_device">(Ningún dispositivo seleccionado)</string>
     <string name="loading">Cargando&#8230;</string>
-    <string name="on_live">&#9899;En directo</string>
+    <string name="on_live">&#9899; En directo</string>
     <string name="no_video_found">No se encontraron vídeos</string>
     <string name="about_app">Sobre CampusSurRadioApp</string>
     <string name="session_reconnection_attempt">Intentando recuperar sesión          anterior&#8230;</string>
