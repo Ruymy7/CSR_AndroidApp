@@ -32,6 +32,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
@@ -41,9 +42,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +58,8 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         LoaderManager.LoaderCallbacks<List<MediaInfo>> {
 
     private static final String TAG = "VideoBrowserFragment";
-    private static final String CATALOG_URL =
-            "http://csradio.ddns.net:2019/api/radioGrill";
+    private static final String CATALOG_URL = "http://iaas92-43.cesvima.upm.es:2019/api/radioGrill";
+    //private static final String CATALOG_URL = "http://192.168.1.114:2019/api/radioGrill";
     private RecyclerView mRecyclerView;
     private VideoListAdapter mAdapter;
     private View mEmptyView;
@@ -86,6 +89,7 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         mAdapter = new VideoListAdapter(this, getContext());
         mRecyclerView.setAdapter(mAdapter);
         getLoaderManager().initLoader(0, null, this);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -114,14 +118,24 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         return new VideoItemLoader(getActivity(), CATALOG_URL);
     }
 
-    public void refresh() {
-        Fragment currentFragment = getFragmentManager().findFragmentById(R.id.browse);
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        if (Build.VERSION.SDK_INT >= 26) {
-            ft.setReorderingAllowed(false);
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_reload_grill) {
+            refresh();
         }
-        ft.detach(currentFragment).attach(currentFragment).commit();
+        return super.onOptionsItemSelected(item);
     }
+
+    public void refresh() {
+        Toast.makeText(getContext(), R.string.refreshing, Toast.LENGTH_SHORT).show();
+        FragmentManager manager = getActivity().getSupportFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+        VideoBrowserFragment videoBrowserFragment = new VideoBrowserFragment();
+        this.onDestroy();
+        ft.remove(this);
+        ft.replace(R.id.browse, videoBrowserFragment);
+        ft.commit();
+    }
+
     @Override
     public void onLoadFinished(Loader<List<MediaInfo>> loader, List<MediaInfo> data) {
         mAdapter.setData(data);
@@ -132,6 +146,7 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
     @Override
     public void onLoaderReset(Loader<List<MediaInfo>> loader) {
         mAdapter.setData(null);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override

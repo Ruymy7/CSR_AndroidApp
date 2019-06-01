@@ -110,10 +110,6 @@ public class VideoProvider {
     }
 
     public static List<MediaInfo> buildMedia(String url) throws JSONException {
-
-        if (null != mediaList) {
-            return mediaList;
-        }
         Map<String, String> urlPrefixMap = new HashMap<>();
         mediaList = new ArrayList<>();
         JSONObject jsonObj = new VideoProvider().parseUrl(url);

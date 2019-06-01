@@ -30,8 +30,6 @@ import com.google.sample.cast.refplayer.liveradio.LiveRadioPlayer;
 import com.google.sample.cast.refplayer.queue.ui.QueueListViewActivity;
 import com.google.sample.cast.refplayer.settings.CastPreference;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -200,8 +198,6 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
         } else if (item.getItemId() == R.id.action_show_queue) {
             intent = new Intent(VideoBrowserActivity.this, QueueListViewActivity.class);
             startActivity(intent);
-        } else if (item.getItemId() == R.id.action_reload_grill) {
-            Toast.makeText(this, R.string.refreshing, Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }

@@ -7,7 +7,8 @@
         <item
             android:id="@+id/nav_podcasts"
             android:icon="@drawable/ic_av_play_over_video"
-            android:title="@string/menu_podcasts" />
+            android:title="@string/menu_podcasts"
+            android:checked="true"/>
         <item
             android:id="@+id/nav_live_radio"
             android:icon="@mipmap/icons8_radio"
