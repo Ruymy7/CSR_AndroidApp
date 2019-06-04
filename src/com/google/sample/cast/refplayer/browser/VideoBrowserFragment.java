@@ -144,6 +144,12 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
     }
 
     @Override
+    public void onDestroy() {
+        mEmptyView.setVisibility(View.GONE);
+        super.onDestroy();
+    }
+
+    @Override
     public void onLoaderReset(Loader<List<MediaInfo>> loader) {
         mAdapter.setData(null);
         mAdapter.notifyDataSetChanged();

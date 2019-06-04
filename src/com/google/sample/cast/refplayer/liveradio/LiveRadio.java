@@ -33,6 +33,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
@@ -43,8 +44,10 @@ import com.google.android.gms.cast.framework.SessionManagerListener;
 import com.google.sample.cast.refplayer.R;
 import com.google.sample.cast.refplayer.VideoBrowserActivity;
 import com.google.sample.cast.refplayer.browser.VideoListAdapter;
+import com.google.sample.cast.refplayer.browser.VideoProvider;
 import com.google.sample.cast.refplayer.queue.ui.QueueListViewActivity;
 import com.google.sample.cast.refplayer.settings.CastPreference;
+import com.google.sample.cast.refplayer.utils.Utils;
 
 import java.io.IOException;
 
@@ -61,8 +64,10 @@ public class LiveRadio extends Fragment {
     private ImageView image_mute;
     private ImageView image_volume;
     private String media = "http://server10.emitironline.com:10288/stream";
-    public static final String PREFS_NAME = "preferences";
-    public boolean serviceBound = false;
+    private static final String PREFS_NAME = "preferences";
+    private boolean serviceBound = false;
+    private MediaInfo item;
+    private int lastVolume = 0;
 
 
     @Override
@@ -74,6 +79,7 @@ public class LiveRadio extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
+        createMediaInfo();
         SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
         serviceBound = settings.getBoolean("bounded", false);
         getButtons();
@@ -87,6 +93,25 @@ public class LiveRadio extends Fragment {
             @Override
             public void onClick(View v) {
                 pause();
+            }
+        });
+        image_volume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lastVolume = volumeBar.getProgress();
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+                image_volume.setVisibility(View.GONE);
+                image_mute.setVisibility(View.VISIBLE);
+                volumeBar.setProgress(0);
+            }
+        });
+        image_mute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, lastVolume, 0);
+                image_volume.setVisibility(View.VISIBLE);
+                image_mute.setVisibility(View.GONE);
+                volumeBar.setProgress(lastVolume);
             }
         });
         volumeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -197,18 +222,24 @@ public class LiveRadio extends Fragment {
     }
 
     private void play() {
-        playButton.setVisibility(View.GONE);
-        pauseButton.setVisibility(View.VISIBLE);
-        textView.setTextColor(getResources().getColor(R.color.red));
         Log.d(TAG, "play: ");
         if (!serviceBound) {
-            Intent playerIntent = new Intent(getContext(), LiveRadioPlayer.class);
-            playerIntent.putExtra("media", media);
-            getActivity().startService(playerIntent);
-            getActivity().bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+            int state = Utils.showQueuePopup(getActivity(), getView().findViewById(R.id.play_button), item);
+            if(state == -1) {
+                playButton.setVisibility(View.GONE);
+                pauseButton.setVisibility(View.VISIBLE);
+                textView.setTextColor(getResources().getColor(R.color.red));
+                Intent playerIntent = new Intent(getContext(), LiveRadioPlayer.class);
+                playerIntent.putExtra("media", media);
+                getActivity().startService(playerIntent);
+                getActivity().bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+            } else {
+                playButton.setVisibility(View.GONE);
+                pauseButton.setVisibility(View.GONE);
+                textView.setTextColor(getResources().getColor(R.color.red));
+            }
         } else {
-            //Service is active
-            //Send media with BroadcastReceiver
+            Log.d(TAG, "play: Player is already running");
         }
     }
 
@@ -216,13 +247,19 @@ public class LiveRadio extends Fragment {
         playButton.setVisibility(View.VISIBLE);
         pauseButton.setVisibility(View.GONE);
         textView.setTextColor(getResources().getColor(R.color.black));
-        serviceBound = false;
-        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("bounded", serviceBound);
-        // Commit the edits!
-        editor.commit();
-        VideoBrowserActivity.player.onDestroy();
-        //VideoBrowserActivity.liveRadioPlayer.stop();
+        if(serviceBound) {
+            serviceBound = false;
+            SharedPreferences settings = getActivity().getSharedPreferences(PREFS_NAME, 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean("bounded", serviceBound);
+            editor.commit();
+            VideoBrowserActivity.player.onDestroy();
+        }
+    }
+
+    private void createMediaInfo() {
+        item = VideoProvider.buildMediaInfo("Campus Sur Radio", "Campus Sur Radio", "En directo",
+                0, media, "audio/mpeg", "http://iaas92-43.cesvima.upm.es:2019/api/thumbnails/icon.png",
+                "http://iaas92-43.cesvima.upm.es:2019/api/thumbnails/icon.png", null);
     }
 }

@@ -176,7 +176,7 @@ public class VideoProvider {
         return mediaList;
     }
 
-    private static MediaInfo buildMediaInfo(String title, String studio, String subTitle,
+    public static MediaInfo buildMediaInfo(String title, String studio, String subTitle,
             int duration, String url, String mimeType, String imgUrl, String bigImageUrl,
             List<MediaTrack> tracks) {
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);

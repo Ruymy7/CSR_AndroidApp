@@ -31,6 +31,7 @@ import com.google.sample.cast.refplayer.queue.ui.QueueListViewActivity;
 import com.google.sample.cast.refplayer.settings.CastPreference;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -72,6 +73,7 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
     private IntroductoryOverlay mIntroductoryOverlay;
     private CastStateListener mCastStateListener;
     private String currentFragment = "PODCASTS";
+    private static final String PREFS_NAME = "preferences";
     public static LiveRadioPlayer player;
 
     private class MySessionManagerListener implements SessionManagerListener<CastSession> {
@@ -308,5 +310,14 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
                 }
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("bounded", false);
+        editor.commit();
+        super.onDestroy();
     }
 }
