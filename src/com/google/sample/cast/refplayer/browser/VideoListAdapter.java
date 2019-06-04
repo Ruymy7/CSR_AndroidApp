@@ -46,7 +46,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
     private final Context mAppContext;
     private List<MediaInfo> videos;
 
-    public VideoListAdapter(ItemClickListener clickListener, Context context) {
+    VideoListAdapter(ItemClickListener clickListener, Context context) {
         mClickListener = clickListener;
         mAppContext = context.getApplicationContext();
     }
@@ -110,10 +110,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         private NetworkImageView mImgView;
         private ImageLoader mImageLoader;
 
-        public static ViewHolder newInstance(View parent) {
-            NetworkImageView imgView = (NetworkImageView) parent.findViewById(R.id.imageView1);
-            TextView titleView = (TextView) parent.findViewById(R.id.textView1);
-            TextView descriptionView = (TextView) parent.findViewById(R.id.textView2);
+        static ViewHolder newInstance(View parent) {
+            NetworkImageView imgView = parent.findViewById(R.id.imageView1);
+            TextView titleView = parent.findViewById(R.id.textView1);
+            TextView descriptionView = parent.findViewById(R.id.textView2);
             View menu = parent.findViewById(R.id.menu);
             View textContainer = parent.findViewById(R.id.text_container);
             return new ViewHolder(parent, imgView, textContainer, titleView, descriptionView, menu);
@@ -134,11 +134,11 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
             mTitleView.setText(title);
         }
 
-        public void setDescription(String description) {
+        void setDescription(String description) {
             mDescriptionView.setText(description);
         }
 
-        public void setImage(String imgUrl, Context context) {
+        void setImage(String imgUrl, Context context) {
             mImageLoader = CustomVolleyRequest.getInstance(context)
                     .getImageLoader();
 
@@ -150,12 +150,12 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
             mParent.setOnClickListener(listener);
         }
 
-        public ImageView getImageView() {
+        ImageView getImageView() {
             return mImgView;
         }
     }
 
-    public void setData(List<MediaInfo> data) {
+    void setData(List<MediaInfo> data) {
         videos = data;
         notifyDataSetChanged();
     }

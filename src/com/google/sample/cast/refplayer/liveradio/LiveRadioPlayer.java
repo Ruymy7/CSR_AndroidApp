@@ -35,12 +35,12 @@ public class LiveRadioPlayer extends Service implements MediaPlayer.OnCompletion
         }
 
         //Request audio focus
-        if (requestAudioFocus() == false) {
+        if (!requestAudioFocus()) {
             //Could not gain focus
             stopSelf();
         }
 
-        if (URL != null && URL != "")
+        if (URL != null && !URL.equals(""))
             initMediaPlayer();
 
         return super.onStartCommand(intent, flags, startId);
@@ -154,21 +154,15 @@ public class LiveRadioPlayer extends Service implements MediaPlayer.OnCompletion
     private boolean requestAudioFocus() {
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            //Focus gained
-            return true;
-        }
-        //Could not gain focus
-        return false;
+        return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
     }
 
     private boolean removeAudioFocus() {
-        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
-                audioManager.abandonAudioFocus(this);
+        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == audioManager.abandonAudioFocus(this);
     }
 
-    public class LocalBinder extends Binder {
-        public LiveRadioPlayer getService() {
+    class LocalBinder extends Binder {
+        LiveRadioPlayer getService() {
             return LiveRadioPlayer.this;
         }
     }

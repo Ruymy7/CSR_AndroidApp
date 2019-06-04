@@ -65,7 +65,7 @@ public class QueueListViewFragment extends Fragment
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RecyclerView recyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         mProvider = QueueDataProvider.getInstance(getContext());
 
         QueueListAdapter adapter = new QueueListAdapter(getActivity(), this);

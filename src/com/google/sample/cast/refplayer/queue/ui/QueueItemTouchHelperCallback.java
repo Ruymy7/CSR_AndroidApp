@@ -27,7 +27,7 @@ public class QueueItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     private final ItemTouchHelperAdapter mAdapter;
 
-    public QueueItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
+    QueueItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
         mAdapter = adapter;
     }
 

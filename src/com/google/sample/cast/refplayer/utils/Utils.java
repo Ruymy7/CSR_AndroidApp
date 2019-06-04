@@ -249,7 +249,7 @@ public class Utils {
         return rebuiltQueue;
     }
 
-    public static MediaQueueItem[] rebuildQueueAndAppend(List<MediaQueueItem> items,
+    private static MediaQueueItem[] rebuildQueueAndAppend(List<MediaQueueItem> items,
             MediaQueueItem currentItem) {
         if (items == null || items.isEmpty()) {
             return new MediaQueueItem[]{currentItem};
@@ -263,7 +263,7 @@ public class Utils {
         return rebuiltQueue;
     }
 
-    public static MediaQueueItem rebuildQueueItem(MediaQueueItem item) {
+    private static MediaQueueItem rebuildQueueItem(MediaQueueItem item) {
         return new MediaQueueItem.Builder(item).clearItemId().build();
     }
 }

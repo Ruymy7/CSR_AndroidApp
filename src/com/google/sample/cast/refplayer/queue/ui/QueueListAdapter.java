@@ -66,7 +66,7 @@ public class QueueListAdapter extends RecyclerView.Adapter<QueueListAdapter.Queu
     private EventListener mEventListener;
     private ImageLoader mImageLoader;
 
-    public QueueListAdapter(Context context, OnStartDragListener dragStartListener) {
+    QueueListAdapter(Context context, OnStartDragListener dragStartListener) {
         mAppContext = context.getApplicationContext();
         mDragStartListener = dragStartListener;
         mProvider = QueueDataProvider.getInstance(context);
@@ -209,11 +209,11 @@ public class QueueListAdapter extends RecyclerView.Adapter<QueueListAdapter.Queu
         private View mUpcomingControls;
         private ImageButton mPlayUpcoming;
         private ImageButton mStopUpcoming;
-        public NetworkImageView mImageView;
-        public ViewGroup mContainer;
-        public ImageView mDragHandle;
-        public TextView mTitleView;
-        public TextView mDescriptionView;
+        NetworkImageView mImageView;
+        ViewGroup mContainer;
+        ImageView mDragHandle;
+        TextView mTitleView;
+        TextView mDescriptionView;
 
         @Override
         public void onItemSelected() {
@@ -235,19 +235,19 @@ public class QueueListAdapter extends RecyclerView.Adapter<QueueListAdapter.Queu
         private static final int UPCOMING = 1;
         private static final int NONE = 2;
 
-        public QueueItemViewHolder(View itemView) {
+        QueueItemViewHolder(View itemView) {
             super(itemView);
             mContext = itemView.getContext();
-            mContainer = (ViewGroup) itemView.findViewById(R.id.container);
-            mDragHandle = (ImageView) itemView.findViewById(R.id.drag_handle);
-            mTitleView = (TextView) itemView.findViewById(R.id.textView1);
-            mDescriptionView = (TextView) itemView.findViewById(R.id.textView2);
-            mImageView = (NetworkImageView) itemView.findViewById(R.id.imageView1);
-            mPlayPause = (ImageButton) itemView.findViewById(R.id.play_pause);
+            mContainer = itemView.findViewById(R.id.container);
+            mDragHandle = itemView.findViewById(R.id.drag_handle);
+            mTitleView = itemView.findViewById(R.id.textView1);
+            mDescriptionView = itemView.findViewById(R.id.textView2);
+            mImageView = itemView.findViewById(R.id.imageView1);
+            mPlayPause = itemView.findViewById(R.id.play_pause);
             mControls = itemView.findViewById(R.id.controls);
             mUpcomingControls = itemView.findViewById(R.id.controls_upcoming);
-            mPlayUpcoming = (ImageButton) itemView.findViewById(R.id.play_upcoming);
-            mStopUpcoming = (ImageButton) itemView.findViewById(R.id.stop_upcoming);
+            mPlayUpcoming = itemView.findViewById(R.id.play_upcoming);
+            mStopUpcoming = itemView.findViewById(R.id.stop_upcoming);
         }
 
         private void updateControlsStatus(@ControlStatus int status) {
@@ -287,7 +287,7 @@ public class QueueListAdapter extends RecyclerView.Adapter<QueueListAdapter.Queu
         }
     }
 
-    public void setEventListener(EventListener eventListener) {
+    void setEventListener(EventListener eventListener) {
         mEventListener = eventListener;
     }
 

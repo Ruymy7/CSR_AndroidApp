@@ -21,6 +21,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaLoadOptions;
 import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.MediaSeekOptions;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
@@ -63,7 +64,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -71,7 +71,6 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.util.Timer;
@@ -765,35 +764,35 @@ public class LocalPlayerActivity extends AppCompatActivity {
     }
 
     private void setupActionBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(mSelectedMedia.getMetadata().getString(MediaMetadata.KEY_TITLE));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void loadViews() {
-        mVideoView = (VideoView) findViewById(R.id.videoView1);
-        mTitleView = (TextView) findViewById(R.id.titleTextView);
-        mDescriptionView = (TextView) findViewById(R.id.descriptionTextView);
+        mVideoView = findViewById(R.id.videoView1);
+        mTitleView = findViewById(R.id.titleTextView);
+        mDescriptionView = findViewById(R.id.descriptionTextView);
         mDescriptionView.setMovementMethod(new ScrollingMovementMethod());
-        mAuthorView = (TextView) findViewById(R.id.authorTextView);
-        mStartText = (TextView) findViewById(R.id.startText);
+        mAuthorView = findViewById(R.id.authorTextView);
+        mStartText = findViewById(R.id.startText);
         mStartText.setText(Utils.formatMillis(0));
-        mEndText = (TextView) findViewById(R.id.endText);
-        mSeekbar = (SeekBar) findViewById(R.id.seekBar1);
-        mPlayPause = (ImageView) findViewById(R.id.playPauseImageView);
-        mLoading = (ProgressBar) findViewById(R.id.progressBar1);
+        mEndText = findViewById(R.id.endText);
+        mSeekbar = findViewById(R.id.seekBar1);
+        mPlayPause = findViewById(R.id.playPauseImageView);
+        mLoading = findViewById(R.id.progressBar1);
         mControllers = findViewById(R.id.controllers);
         mContainer = findViewById(R.id.container);
-        mCoverArt = (NetworkImageView) findViewById(R.id.coverArtView);
+        mCoverArt = findViewById(R.id.coverArtView);
         ViewCompat.setTransitionName(mCoverArt, getString(R.string.transition_image));
-        mPlayCircle = (ImageButton) findViewById(R.id.play_circle);
+        mPlayCircle = findViewById(R.id.play_circle);
         mPlayCircle.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 togglePlayback();
             }
         });
-        mShare = (FloatingActionButton) findViewById(R.id.button_share);
+        mShare = findViewById(R.id.button_share);
     }
 }

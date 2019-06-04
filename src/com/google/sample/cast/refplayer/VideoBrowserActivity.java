@@ -44,16 +44,9 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -175,7 +168,7 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
                 R.id.media_route_menu_item);
         mQueueMenuItem = menu.findItem(R.id.action_show_queue);
         reloadMenuItem = menu.findItem(R.id.action_reload_grill);
-        if(currentFragment != "PODCASTS")
+        if(!currentFragment.equals("PODCASTS"))
             reloadMenuItem.setVisible(false);
         showIntroductoryOverlay();
         return true;
@@ -208,7 +201,7 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
         int id = item.getItemId();
         Intent intent;
         Class fragmentClass = null;
-        Fragment fragment = null;
+        Fragment fragment;
         FragmentManager fragmentManager = getSupportFragmentManager();
         List<Fragment> fragmentList = fragmentManager.getFragments();
 

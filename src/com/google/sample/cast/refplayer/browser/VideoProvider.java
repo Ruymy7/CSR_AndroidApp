@@ -19,14 +19,11 @@ import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaTrack;
 import com.google.android.gms.common.images.WebImage;
-import com.google.sample.cast.refplayer.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.util.Log;
 
@@ -48,8 +45,6 @@ public class VideoProvider {
 
     private static final String TAG = "VideoProvider";
     private static final String TAG_VIDEOS = "videos";
-    //private static final String TAG_HLS = "hls";
-    //private static final String TAG_DASH = "dash";
     private static final String TAG_MP4 = "mp4";
     private static final String TAG_IMAGES = "images";
     private static final String TAG_VIDEO_TYPE = "type";
@@ -78,7 +73,7 @@ public class VideoProvider {
     private static final String TARGET_FORMAT = TAG_MP4;
     private static List<MediaInfo> mediaList;
 
-    protected JSONObject parseUrl(String urlString) {
+    private JSONObject parseUrl(String urlString) {
         InputStream is = null;
         try {
             java.net.URL url = new java.net.URL(urlString);
@@ -109,11 +104,11 @@ public class VideoProvider {
         }
     }
 
-    public static List<MediaInfo> buildMedia(String url) throws JSONException {
+    static List<MediaInfo> buildMedia(String url) throws JSONException {
         Map<String, String> urlPrefixMap = new HashMap<>();
         mediaList = new ArrayList<>();
         JSONObject jsonObj = new VideoProvider().parseUrl(url);
-        JSONArray categories = jsonObj.getJSONArray(TAG_CATEGORIES);
+        JSONArray categories = jsonObj != null ? jsonObj.getJSONArray(TAG_CATEGORIES) : null;
         if (null != categories) {
             for (int i = 0; i < categories.length(); i++) {
                 JSONObject category = categories.getJSONObject(i);

@@ -42,7 +42,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class QueueDataProvider {
 
     private static final String TAG = "QueueDataProvider";
-    public static final int INVALID = -1;
+    private static final int INVALID = -1;
     private final Context mAppContext;
     private final List<MediaQueueItem> mQueue = new CopyOnWriteArrayList<>();
     private static QueueDataProvider mInstance;
@@ -167,7 +167,7 @@ public class QueueDataProvider {
         return mQueue.get(position);
     }
 
-    public void clearQueue() {
+    private void clearQueue() {
         mQueue.clear();
         mDetachedQueue = true;
         mCurrentIem = null;

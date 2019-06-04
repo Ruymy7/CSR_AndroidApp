@@ -103,8 +103,7 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
                     (VideoListAdapter.ViewHolder) mRecyclerView.findViewHolderForPosition(position);
             Pair<View, String> imagePair = Pair
                     .create((View) viewHolder.getImageView(), transitionName);
-            ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(getActivity(), imagePair);
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), imagePair);
 
             Intent intent = new Intent(getActivity(), LocalPlayerActivity.class);
             intent.putExtra("media", item);
@@ -125,7 +124,7 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         return super.onOptionsItemSelected(item);
     }
 
-    public void refresh() {
+    private void refresh() {
         Toast.makeText(getContext(), R.string.refreshing, Toast.LENGTH_SHORT).show();
         FragmentManager manager = getActivity().getSupportFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
