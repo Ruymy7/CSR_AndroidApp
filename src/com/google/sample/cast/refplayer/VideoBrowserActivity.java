@@ -44,6 +44,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,7 +69,6 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
     private CastStateListener mCastStateListener;
     private String currentFragment = "PODCASTS";
     private static final String PREFS_NAME = "preferences";
-    public static LiveRadioPlayer player;
 
     private class MySessionManagerListener implements SessionManagerListener<CastSession> {
 
@@ -307,10 +308,6 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
 
     @Override
     protected void onDestroy() {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("bounded", false);
-        editor.commit();
         super.onDestroy();
     }
 }

@@ -80,7 +80,7 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRecyclerView = (RecyclerView) getView().findViewById(R.id.list);
+        mRecyclerView = getView().findViewById(R.id.list);
         mEmptyView = getView().findViewById(R.id.empty_view);
         mLoadingView = getView().findViewById(R.id.progress_indicator);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());

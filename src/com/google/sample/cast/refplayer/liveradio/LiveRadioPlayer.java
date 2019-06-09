@@ -3,27 +3,23 @@ package com.google.sample.cast.refplayer.liveradio;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
-import android.widget.Toast;
-
-import androidx.annotation.Nullable;
 
 import java.io.IOException;
 
-import static com.android.volley.VolleyLog.TAG;
 
-public class LiveRadioPlayer extends Service implements MediaPlayer.OnCompletionListener,
-        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnSeekCompleteListener,
+public class LiveRadioPlayer extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnSeekCompleteListener,
         MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener, AudioManager.OnAudioFocusChangeListener {
 
     private final IBinder iBinder = new LocalBinder();
     private MediaPlayer mediaPlayer;
     private String URL;
     private AudioManager audioManager;
+    private static final String PREFS_NAME = "preferences";
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -52,14 +48,18 @@ public class LiveRadioPlayer extends Service implements MediaPlayer.OnCompletion
         if (mediaPlayer != null) {
             stopMedia();
             mediaPlayer.release();
+            mediaPlayer = null;
         }
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("isplaying", false);
+        editor.commit();
         removeAudioFocus();
     }
 
     private void initMediaPlayer() {
         mediaPlayer = new MediaPlayer();
         //Set up MediaPlayer event listeners
-        mediaPlayer.setOnCompletionListener(this);
         mediaPlayer.setOnErrorListener(this);
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnBufferingUpdateListener(this);
@@ -98,16 +98,21 @@ public class LiveRadioPlayer extends Service implements MediaPlayer.OnCompletion
     }
 
     @Override
+    public void onRebind(Intent intent) {
+
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return true;
+    }
+
+    @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
         //Invoked indicating buffering status of
         //a media resource being streamed over the network.
     }
 
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-        stopMedia();
-        stopSelf();
-    }
 
     //Handle errors
     @Override
@@ -158,12 +163,20 @@ public class LiveRadioPlayer extends Service implements MediaPlayer.OnCompletion
     }
 
     private boolean removeAudioFocus() {
-        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == audioManager.abandonAudioFocus(this);
+        if(audioManager != null)
+            return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == audioManager.abandonAudioFocus(this);
+        return false;
     }
 
     class LocalBinder extends Binder {
         LiveRadioPlayer getService() {
             return LiveRadioPlayer.this;
         }
+    }
+
+    boolean isPlaying() {
+        if(mediaPlayer != null)
+            return mediaPlayer.isPlaying();
+        return false;
     }
 }
