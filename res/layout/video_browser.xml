@@ -37,7 +37,7 @@
         android:layout_above="@+id/cast_mini_controller"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="-5dp"
-        class="com.google.sample.cast.refplayer.browser.VideoBrowserFragment" />
+        class="com.etsisi.campussurradio.androidapp.player.browser.VideoBrowserFragment" />
 
     <fragment
         android:id="@+id/cast_mini_controller"

@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".liveradio.LiveRadio"
+    tools:context="com.etsisi.campussurradio.androidapp.player.liveradio.LiveRadio"
     android:id="@+id/live_radio_fragment">
 
     <ImageView

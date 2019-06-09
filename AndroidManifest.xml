@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.google.sample.cast.refplayer">
+    package="com.etsisi.campussurradio.androidapp.player">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <uses-feature
         android:name="android.hardware.wifi"
-        android:required="true"></uses-feature>
+        android:required="true"/>
 
     <application
         android:allowBackup="true"
@@ -26,7 +27,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".liveradio.LiveRadioPlayer"></service>
+        <service
+            android:name=".liveradio.LiveRadioPlayer"
+            android:stopWithTask="false" />
         <activity
             android:name=".mediaplayer.LocalPlayerActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize|screenLayout|uiMode"
@@ -64,12 +67,12 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.google.sample.cast.refplayer.VideoBrowserActivity" />
+                android:value="com.etsisi.campussurradio.androidapp.player.VideoBrowserActivity" />
         </activity>
 
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value="com.google.sample.cast.refplayer.CastOptionsProvider" />
+            android:value="com.etsisi.campussurradio.androidapp.player.CastOptionsProvider" />
     </application>
 
 </manifest>
