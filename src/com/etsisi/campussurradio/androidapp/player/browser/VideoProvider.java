@@ -68,6 +68,11 @@ public class VideoProvider {
     private static final String TAG_IMG_780_1200 = "image-780x1200";
     private static final String TAG_TITLE = "title";
 
+    public static final String TAG_DAY = "day";
+    public static final String TAG_HOUR = "hour";
+    public static final String TAG_INIT_TIME = "start-timestamp";
+    public static final String TAG_END_TIME = "end-timestamp";
+
     public static final String KEY_DESCRIPTION = "description";
 
     private static final String TARGET_FORMAT = TAG_MP4;
@@ -114,7 +119,6 @@ public class VideoProvider {
                 JSONObject category = categories.getJSONObject(i);
                 urlPrefixMap.put(TAG_MP4, category.getString(TAG_MP4));
                 urlPrefixMap.put(TAG_IMAGES, category.getString(TAG_IMAGES));
-                //urlPrefixMap.put(TAG_TRACKS, category.getString(TAG_TRACKS));
                 category.getString(TAG_NAME);
                 JSONArray videos = category.getJSONArray(TAG_VIDEOS);
                 if (null != videos) {
@@ -123,6 +127,10 @@ public class VideoProvider {
                         String mimeType = null;
                         JSONObject video = videos.getJSONObject(j);
                         String subTitle = video.getString(TAG_SUBTITLE);
+                        String day = video.getString(TAG_DAY);
+                        String hour = video.getString(TAG_HOUR);
+                        int initTimestamp = video.getInt(TAG_INIT_TIME);
+                        int endTimestamp = video.getInt(TAG_END_TIME);
                         JSONArray videoSpecs = video.getJSONArray(TAG_SOURCES);
                         if (null == videoSpecs || videoSpecs.length() == 0) {
                             continue;
@@ -163,19 +171,23 @@ public class VideoProvider {
                             }
                         }
                         mediaList.add(buildMediaInfo(title, studio, subTitle, duration, videoUrl,
-                                mimeType, imageUrl, bigImageUrl, tracks));
+                                mimeType, imageUrl, bigImageUrl, tracks, day, hour, initTimestamp, endTimestamp));
                     }
                 }
             }
         }
-        return mediaList;
+        return sort(mediaList);
     }
 
     public static MediaInfo buildMediaInfo(String title, String studio, String subTitle,
             int duration, String url, String mimeType, String imgUrl, String bigImageUrl,
-            List<MediaTrack> tracks) {
+            List<MediaTrack> tracks, String day, String hour, int initTimestamp, int endTimestamp) {
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
 
+        movieMetadata.putString(TAG_DAY, day);
+        movieMetadata.putString(TAG_HOUR, hour);
+        movieMetadata.putInt(TAG_INIT_TIME, initTimestamp);
+        movieMetadata.putInt(TAG_END_TIME, endTimestamp);
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, studio);
         movieMetadata.putString(MediaMetadata.KEY_TITLE, title);
         movieMetadata.addImage(new WebImage(Uri.parse(imgUrl)));
@@ -223,5 +235,61 @@ public class VideoProvider {
                 .setSubtype(trackSubType)
                 .setContentId(contentId)
                 .setLanguage(language).build();
+    }
+
+    private static List<MediaInfo> sort(List<MediaInfo> list) {
+        String[] days = new String[]{"L", "M", "X", "J", "V", "S", "D"};
+        ArrayList<MediaInfo> orderedArray = new ArrayList<MediaInfo>();
+        int minDay = 99999;
+        int minPosition = -1;
+        int size = list.size();
+
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < list.size(); j++) {
+                int dayIndex = findIndexOf(days, list.get(j).getMetadata().getString(TAG_DAY));
+                if(dayIndex != -1 && dayIndex < minDay){
+                    minDay = dayIndex;
+                    minPosition = j;
+                } else if(dayIndex == minDay) {
+                    if(compareHours(list.get(minPosition).getMetadata().getString(TAG_HOUR), list.get(j).getMetadata().getString(TAG_HOUR)) > 0) {
+                        minPosition = j;
+                    }
+                }
+            }
+            orderedArray.add(list.get(minPosition));
+            list.remove(minPosition);
+            minDay = 99999;
+        }
+        return orderedArray;
+    }
+
+    public static int findIndexOf(String[] array, String string) {
+        for(int i = 0; i < array.length; i++){
+            if(array[i].equals(string)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // Return 1 if hour 1 > hour2, 0 if hour1 == hour2 and -1 if hour1 < hour2
+    public static int compareHours(String hour1, String hour2) {
+        int hours1 = Integer.parseInt(hour1.split(":")[0]);
+        int minutes1 = Integer.parseInt(hour1.split(":")[1]);
+        int hours2 = Integer.parseInt(hour2.split(":")[0]);
+        int minutes2 = Integer.parseInt(hour2.split(":")[1]);
+
+        if(hours1 > hours2){
+            return 1;
+        } else if (hours1 < hours2){
+            return -1;
+        } else {
+            if(minutes1 > minutes2)
+                return 1;
+            else if(minutes1 < minutes2)
+                return -1;
+            else
+                return 0;
+        }
     }
 }

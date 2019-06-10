@@ -18,6 +18,9 @@ package com.etsisi.campussurradio.androidapp.player.browser;
 
 import android.content.Context;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +38,8 @@ import com.etsisi.campussurradio.androidapp.player.utils.CustomVolleyRequest;
 import com.etsisi.campussurradio.androidapp.player.R;
 
 import java.util.List;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 /**
  * An {@link ArrayAdapter} to populate the list of videos.
@@ -91,9 +96,14 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
                 (castSession != null && castSession.isConnected()) ? View.VISIBLE : View.GONE);
     }
 
+
     @Override
     public int getItemCount() {
         return videos == null ? 0 : videos.size();
+    }
+
+    public List<MediaInfo> getVideos() {
+        return videos;
     }
 
     /**

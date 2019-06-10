@@ -39,6 +39,8 @@ import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,7 +48,11 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A fragment to host a list view of the video catalog.
@@ -63,6 +69,7 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
     private View mLoadingView;
     private final SessionManagerListener<CastSession> mSessionManagerListener =
             new MySessionManagerListener();
+    private List<MediaInfo> videos;
 
     public VideoBrowserFragment() {
     }
@@ -87,6 +94,32 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         mRecyclerView.setAdapter(mAdapter);
         getLoaderManager().initLoader(0, null, this);
         setHasOptionsMenu(true);
+    }
+
+    private int getScrollPosition() {
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        String[] days = new String[]{"L", "M", "X", "J", "V", "S", "D"};
+        int day = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        if(day == 0){
+            day = 6;
+        } else {
+            day = day - 1;
+        }
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        boolean found = false;
+        Log.d(TAG, "getScrollPosition: " + day + " " + hour + " " + minute);
+        int scrollTo = 0;
+
+        for(int i = 0; i < videos.size(); i++) {
+            int dayOfVideo = VideoProvider.findIndexOf(days, videos.get(i).getMetadata().getString(VideoProvider.TAG_DAY));
+            if(dayOfVideo == day) {
+                if(VideoProvider.compareHours(videos.get(i).getMetadata().getString(VideoProvider.TAG_HOUR), hour+":"+minute) <= 0){
+                    scrollTo = i;
+                }
+            }
+        }
+        return scrollTo;
     }
 
     @Override
@@ -136,6 +169,8 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
     public void onLoadFinished(Loader<List<MediaInfo>> loader, List<MediaInfo> data) {
         mAdapter.setData(data);
         mLoadingView.setVisibility(View.GONE);
+        videos = mAdapter.getVideos();
+        mRecyclerView.getLayoutManager().scrollToPosition(getScrollPosition());
         mEmptyView.setVisibility(null == data || data.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
@@ -149,6 +184,7 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
     @Override
     public void onLoaderReset(Loader<List<MediaInfo>> loader) {
         mAdapter.setData(null);
+        videos = null;
         mAdapter.notifyDataSetChanged();
     }
 

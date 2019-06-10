@@ -225,7 +225,7 @@ public class LiveRadio extends Fragment {
     private void createMediaInfo() {
         item = VideoProvider.buildMediaInfo("Campus Sur Radio", "Campus Sur Radio", "En directo",
                 0, media, "audio/mpeg", "http://iaas92-43.cesvima.upm.es:2019/api/thumbnails/icon.png",
-                "http://iaas92-43.cesvima.upm.es:2019/api/thumbnails/icon.png", null);
+                "http://iaas92-43.cesvima.upm.es:2019/api/thumbnails/icon.png", null, "", "", 0, 0);
     }
 
     @Override
