@@ -46,5 +46,8 @@ public class CastPreference extends PreferenceActivity
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         // Handle volume and caption preferences.
+        if(key.equals("shouldStopPlaying")) {
+
+        }
     }
 }

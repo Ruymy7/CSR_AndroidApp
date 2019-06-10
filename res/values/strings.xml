@@ -48,6 +48,11 @@
     <string name="version" translatable="false">CampusSurRadioApp: %1$s</string>
     <string name="session_reconnection_attempt">Attempting to recover previous         session&#8230;</string>
     <string name="introducing_cast">Introducting Cast</string>
+    <string name="preference_key" translatable="false">com.etsisi.campussurradio.androidapp.player.preferences</string>
+    <string name="shouldStopPlaying" translatable="false">shouldStopPlaying</string>
+    <string name="stopPlayingOnLock">Stop playing local videos when locking the device: </string>
+    <string name="yes">%1$s</string>
+    <string name="no">No</string>
 
     <!-- Error messages -->
     <!-- onApplicationConnectionFailed() errors -->

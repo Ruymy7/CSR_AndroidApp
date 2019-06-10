@@ -56,4 +56,7 @@
     <string name="connection_lost_retry">La conexión con el dispositivo de cast esta perdida temporalmente.         La aplicación está intentando recuperar la conexión, inténtalo más tarde</string>
     <string name="connection_lost">No existe conexión con el dispositivo de cast</string>
     <string name="failed_to_perform_action">Ha habido problemas realizando la acción solicitada</string>
+    <string name="stopPlayingOnLock">Detener reproducción local al bloquear el dispositivo: </string>
+    <string name="yes">%1$s</string>
+    <string name="no">No</string>
 </resources>

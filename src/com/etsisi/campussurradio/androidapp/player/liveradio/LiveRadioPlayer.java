@@ -98,7 +98,8 @@ public class LiveRadioPlayer extends Service implements MediaPlayer.OnPreparedLi
     }
 
     public void hideNotification() {
-        notificationManagerCompat.cancel(notification_id);
+        if(notificationManagerCompat != null)
+            notificationManagerCompat.cancelAll();
     }
 
     private void initMediaPlayer() {
@@ -189,15 +190,20 @@ public class LiveRadioPlayer extends Service implements MediaPlayer.OnPreparedLi
                 if (mediaPlayer == null) initMediaPlayer();
                 else if (!mediaPlayer.isPlaying()) mediaPlayer.start();
                 mediaPlayer.setVolume(1.0f, 1.0f);
+                showNotification();
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
                 if (mediaPlayer.isPlaying()) mediaPlayer.stop();
+                hideNotification();
                 mediaPlayer.release();
                 mediaPlayer = null;
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                if (mediaPlayer.isPlaying()) mediaPlayer.stop();
+                hideNotification();
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                mediaPlayer.setVolume(0.1f, 0.1f);
                 break;
         }
     }

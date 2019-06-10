@@ -37,7 +37,9 @@ import com.etsisi.campussurradio.androidapp.player.browser.VideoProvider;
 import com.etsisi.campussurradio.androidapp.player.settings.CastPreference;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.media.MediaPlayer;
@@ -53,6 +55,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.preference.PreferenceManager;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -62,6 +66,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -417,7 +422,9 @@ public class LocalPlayerActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause() was called");
-        if (mLocation == PlaybackLocation.LOCAL) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String shouldStopPlaying = sharedPreferences.getString(getString(R.string.shouldStopPlaying), "Sí");
+        if (mLocation == PlaybackLocation.LOCAL && shouldStopPlaying.equals("Sí")) {
 
             if (mSeekbarTimer != null) {
                 mSeekbarTimer.cancel();
@@ -431,9 +438,11 @@ public class LocalPlayerActivity extends AppCompatActivity {
             mVideoView.pause();
             mPlaybackState = PlaybackState.PAUSED;
             updatePlayButton(PlaybackState.PAUSED);
+        } else {
+            mPlayCircle.setVisibility(View.GONE);
         }
-        mCastContext.getSessionManager().removeSessionManagerListener(
-                mSessionManagerListener, CastSession.class);
+        if(shouldStopPlaying.equals("Sí"))
+            mCastContext.getSessionManager().removeSessionManagerListener(mSessionManagerListener, CastSession.class);
     }
 
     @Override
@@ -631,17 +640,17 @@ public class LocalPlayerActivity extends AppCompatActivity {
         boolean isConnected = (mCastSession != null)
                 && (mCastSession.isConnected() || mCastSession.isConnecting());
         mControllers.setVisibility(isConnected ? View.GONE : View.VISIBLE);
-        mPlayCircle.setVisibility(isConnected ? View.GONE : View.VISIBLE);
+        mPlayCircle.setVisibility(isConnected || mVideoView.isPlaying() ? View.GONE : View.VISIBLE);
         switch (state) {
             case PLAYING:
                 mLoading.setVisibility(View.INVISIBLE);
                 mPlayPause.setVisibility(View.VISIBLE);
                 mPlayPause.setImageDrawable(
                         getResources().getDrawable(R.drawable.ic_av_pause_dark));
-                mPlayCircle.setVisibility(isConnected ? View.VISIBLE : View.GONE);
+                mPlayCircle.setVisibility(isConnected && !mVideoView.isPlaying() ? View.VISIBLE : View.GONE);
                 break;
             case IDLE:
-                mPlayCircle.setVisibility(View.VISIBLE);
+                mPlayCircle.setVisibility(mVideoView.isPlaying() ? View.GONE : View.VISIBLE);
                 mControllers.setVisibility(View.GONE);
                 mCoverArt.setVisibility(View.VISIBLE);
                 mVideoView.setVisibility(View.INVISIBLE);
@@ -654,6 +663,7 @@ public class LocalPlayerActivity extends AppCompatActivity {
                 mPlayCircle.setVisibility(isConnected ? View.VISIBLE : View.GONE);
                 break;
             case BUFFERING:
+                mPlayCircle.setVisibility(View.GONE);
                 mPlayPause.setVisibility(View.INVISIBLE);
                 mLoading.setVisibility(View.VISIBLE);
                 break;
@@ -671,10 +681,9 @@ public class LocalPlayerActivity extends AppCompatActivity {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-            }
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
             updateMetadata(false);
+            mShare.hide();
             mContainer.setBackgroundColor(getResources().getColor(R.color.black));
 
         } else {
@@ -682,10 +691,9 @@ public class LocalPlayerActivity extends AppCompatActivity {
                     WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
             getWindow().clearFlags(
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-            }
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
             updateMetadata(true);
+            mShare.show();
             mContainer.setBackgroundColor(getResources().getColor(R.color.white));
         }
     }

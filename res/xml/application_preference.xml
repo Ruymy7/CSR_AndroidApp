@@ -27,6 +27,14 @@
             android:key="volume_target"
             android:summary="@string/prefs_volume_title_summary"
             android:title="@string/prefs_volume_title" />
+        <ListPreference
+            android:defaultValue="@string/stopPlayingOnLock"
+            android:dialogTitle="@string/stopPlayingOnLock"
+            android:entries="@array/shouldStopPlayingValues"
+            android:entryValues="@array/shouldStopPlayingValues"
+            android:key="@string/shouldStopPlaying"
+            android:summary="@string/yes"
+            android:title="@string/stopPlayingOnLock" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/about_app" >
         <EditTextPreference

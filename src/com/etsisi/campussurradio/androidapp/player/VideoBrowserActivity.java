@@ -43,6 +43,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -134,7 +135,7 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
             }
         };
         mCastContext = CastContext.getSharedInstance(this);
-        if(getIntent().getAction() != null && getIntent().getAction().equals("liveradio")){
+        if(getIntent().getAction() != null && getIntent().getAction().equals("liveradio") && !currentFragment.equals("LIVERADIO")){
             intentToLiveRadio();
         }
     }
@@ -210,7 +211,7 @@ public class VideoBrowserActivity extends AppCompatActivity implements Navigatio
         if (id == R.id.nav_share) {
             Intent myIntent = new Intent(Intent.ACTION_SEND);
             myIntent.setType("text/plain");
-            String shareBody = getString(R.string.share_text) + " http://csradio.ddns.net:2019" ;
+            String shareBody = getString(R.string.share_text) + " http://radio.campussur.upm.es/" ;
             String shareSub = "Campus Sur Radio";
             myIntent.putExtra(Intent.EXTRA_SUBJECT, shareSub);
             myIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
