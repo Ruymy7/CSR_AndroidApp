@@ -116,6 +116,8 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
             if(dayOfVideo == day) {
                 if(VideoProvider.compareHours(videos.get(i).getMetadata().getString(VideoProvider.TAG_HOUR), hour+":"+minute) <= 0){
                     scrollTo = i;
+                } else if(dayOfVideo > 0){
+                    return i-1;
                 }
             }
         }
