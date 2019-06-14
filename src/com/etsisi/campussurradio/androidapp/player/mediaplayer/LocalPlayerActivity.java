@@ -91,6 +91,7 @@ public class LocalPlayerActivity extends AppCompatActivity {
     private TextView mDescriptionView;
     private TextView mStartText;
     private TextView mEndText;
+    private TextView mTimeView;
     private SeekBar mSeekbar;
     private ImageView mPlayPause;
     private ProgressBar mLoading;
@@ -148,6 +149,9 @@ public class LocalPlayerActivity extends AppCompatActivity {
             setupActionBar();
             boolean shouldStartPlayback = bundle.getBoolean("shouldStart");
             int startPosition = bundle.getInt("startPosition", 0);
+            String day = mSelectedMedia.getMetadata().getString(VideoProvider.TAG_DAY);
+            String hour = mSelectedMedia.getMetadata().getString(VideoProvider.TAG_HOUR);
+            mTimeView.setText(getDateAndTime(day, hour));
             mVideoView.setVideoURI(Uri.parse(mSelectedMedia.getContentId()));
             Log.d(TAG, "Setting url of the VideoView to: " + mSelectedMedia.getContentId());
             if (shouldStartPlayback) {
@@ -176,6 +180,17 @@ public class LocalPlayerActivity extends AppCompatActivity {
         if (mTitleView != null) {
             updateMetadata(true);
         }
+    }
+
+    private String getDateAndTime(String day, String hour){
+        String[] daysLetter = new String[]{"L", "M", "X", "J", "V", "S", "D"};
+        String[] days = new String[]{"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
+
+        int index = VideoProvider.findIndexOf(daysLetter, day);
+        String currentDay = days[index];
+
+        return currentDay + ": " + hour;
+
     }
 
     private void setupCastListener() {
@@ -801,5 +816,6 @@ public class LocalPlayerActivity extends AppCompatActivity {
             }
         });
         mShare = findViewById(R.id.button_share);
+        mTimeView = findViewById(R.id.textViewTime);
     }
 }

@@ -70,8 +70,6 @@ public class VideoProvider {
 
     public static final String TAG_DAY = "day";
     public static final String TAG_HOUR = "hour";
-    public static final String TAG_INIT_TIME = "start-timestamp";
-    public static final String TAG_END_TIME = "end-timestamp";
 
     public static final String KEY_DESCRIPTION = "description";
 
@@ -129,8 +127,6 @@ public class VideoProvider {
                         String subTitle = video.getString(TAG_SUBTITLE);
                         String day = video.getString(TAG_DAY);
                         String hour = video.getString(TAG_HOUR);
-                        int initTimestamp = video.getInt(TAG_INIT_TIME);
-                        int endTimestamp = video.getInt(TAG_END_TIME);
                         JSONArray videoSpecs = video.getJSONArray(TAG_SOURCES);
                         if (null == videoSpecs || videoSpecs.length() == 0) {
                             continue;
@@ -171,7 +167,7 @@ public class VideoProvider {
                             }
                         }
                         mediaList.add(buildMediaInfo(title, studio, subTitle, duration, videoUrl,
-                                mimeType, imageUrl, bigImageUrl, tracks, day, hour, initTimestamp, endTimestamp));
+                                mimeType, imageUrl, bigImageUrl, tracks, day, hour));
                     }
                 }
             }
@@ -181,13 +177,11 @@ public class VideoProvider {
 
     public static MediaInfo buildMediaInfo(String title, String studio, String subTitle,
             int duration, String url, String mimeType, String imgUrl, String bigImageUrl,
-            List<MediaTrack> tracks, String day, String hour, int initTimestamp, int endTimestamp) {
+            List<MediaTrack> tracks, String day, String hour) {
         MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
 
         movieMetadata.putString(TAG_DAY, day);
         movieMetadata.putString(TAG_HOUR, hour);
-        movieMetadata.putInt(TAG_INIT_TIME, initTimestamp);
-        movieMetadata.putInt(TAG_END_TIME, endTimestamp);
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, studio);
         movieMetadata.putString(MediaMetadata.KEY_TITLE, title);
         movieMetadata.addImage(new WebImage(Uri.parse(imgUrl)));

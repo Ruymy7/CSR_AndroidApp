@@ -134,14 +134,25 @@
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/textViewTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/titleTextView"
+        android:layout_alignEnd="@+id/titleTextView"
+        android:layout_marginBottom="-25dp"
+        android:text=""
+        android:textSize="14sp"
+        android:textStyle="italic"
+        android:visibility="visible" />
+
+    <TextView
+        android:layout_marginTop="25dp"
         android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@+id/videoView1"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="10dp"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -150,7 +161,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/titleTextView"
-        android:layout_alignRight="@+id/titleTextView"
         android:layout_below="@+id/titleTextView"
         android:layout_marginTop="2dp"
         android:lines="1"
