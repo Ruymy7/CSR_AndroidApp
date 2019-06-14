@@ -88,6 +88,7 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new VideoListAdapter(this, getContext());
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setNestedScrollingEnabled(false);
         //getLoaderManager().initLoader(0, null, this);
         LoaderManager.getInstance(this).initLoader(0, null, this);
         setHasOptionsMenu(true);

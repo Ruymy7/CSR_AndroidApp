@@ -17,16 +17,17 @@
 <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="8dp"
+    android:paddingBottom="0dp"
     android:paddingStart="4dp"
     android:paddingEnd="4dp"
-    android:paddingTop="8dp"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+    android:paddingTop="0dp"
+    android:background="#f4f4f4"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:background="@drawable/browse_row">
 
         <TextView
             android:id="@+id/textStartHour"
@@ -35,7 +36,8 @@
             android:layout_alignBottom="@+id/textDivider"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="1dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
 
         <ImageView
             android:id="@+id/textDivider"
@@ -53,7 +55,8 @@
             android:layout_alignTop="@+id/textDivider"
             android:layout_marginTop="8dp"
             android:layout_alignStart="@+id/textStartHour"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/imageView1"

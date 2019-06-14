@@ -38,6 +38,7 @@ import com.etsisi.campussurradio.androidapp.player.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -206,6 +207,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
             mTextDay.setText(day);
             if(days[today].equals(day)) {
                 mTextDay.setTextColor(Color.RED);
+            } else {
+                mTextDay.setTextColor(Color.rgb(100, 100, 100));
             }
         }
 
@@ -261,12 +264,17 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
     }
 
     private String getVideoDay(int position) {
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        String[] months = new String[]{"enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"};
         String[] daysLetter = new String[]{"L", "M", "X", "J", "V", "S", "D"};
         String[] days = new String[]{"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
         String day = videos.get(position).getMetadata().getString(VideoProvider.TAG_DAY);
 
         int index = VideoProvider.findIndexOf(daysLetter, day);
-        return days[index];
+        return days[index] + ", " + dayOfMonth + " de " + months[month] + " de " + year;
     }
 
     /**
