@@ -6,12 +6,12 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_podcasts"
-            android:icon="@drawable/ic_av_play_over_video"
+            android:icon="@drawable/menu_calendar"
             android:title="@string/menu_podcasts"
             android:checked="true"/>
         <item
             android:id="@+id/nav_live_radio"
-            android:icon="@mipmap/icons8_radio"
+            android:icon="@drawable/flaticon_radio"
             android:title="@string/menu_live_radio" />
     </group>
 

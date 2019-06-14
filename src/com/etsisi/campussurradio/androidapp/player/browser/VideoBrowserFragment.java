@@ -39,8 +39,6 @@ import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,9 +46,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -92,7 +88,8 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new VideoListAdapter(this, getContext());
         mRecyclerView.setAdapter(mAdapter);
-        getLoaderManager().initLoader(0, null, this);
+        //getLoaderManager().initLoader(0, null, this);
+        LoaderManager.getInstance(this).initLoader(0, null, this);
         setHasOptionsMenu(true);
     }
 
@@ -107,8 +104,6 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         }
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-        boolean found = false;
-        Log.d(TAG, "getScrollPosition: " + day + " " + hour + " " + minute);
         int scrollTo = 0;
 
         for(int i = 0; i < videos.size(); i++) {

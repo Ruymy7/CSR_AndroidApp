@@ -19,8 +19,7 @@ package com.etsisi.campussurradio.androidapp.player.browser;
 import android.content.Context;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Build;
-import android.util.Log;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,9 +36,10 @@ import com.google.android.gms.cast.framework.CastSession;
 import com.etsisi.campussurradio.androidapp.player.utils.CustomVolleyRequest;
 import com.etsisi.campussurradio.androidapp.player.R;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
+import java.util.Locale;
 
 /**
  * An {@link ArrayAdapter} to populate the list of videos.
@@ -50,6 +50,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
     private final ItemClickListener mClickListener;
     private final Context mAppContext;
     private List<MediaInfo> videos;
+    private List<Integer> headerPositions = new ArrayList<Integer>();
 
     VideoListAdapter(ItemClickListener clickListener, Context context) {
         mClickListener = clickListener;
@@ -59,41 +60,53 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Context context = viewGroup.getContext();
-        View parent = LayoutInflater.from(context).inflate(R.layout.browse_row, viewGroup, false);
+        View parent;
+        if(viewType == R.layout.browse_row) {
+            parent = LayoutInflater.from(context).inflate(R.layout.browse_row, viewGroup, false);
+        }else {
+            parent = LayoutInflater.from(context).inflate(R.layout.header_hours, viewGroup, false);
+        }
         return ViewHolder.newInstance(parent);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        final MediaInfo item = videos.get(position);
-        MediaMetadata mm = item.getMetadata();
-        viewHolder.setTitle(mm.getString(MediaMetadata.KEY_TITLE));
-        viewHolder.setDescription(mm.getString(MediaMetadata.KEY_SUBTITLE));
-        viewHolder.setImage(mm.getImages().get(0).getUrl().toString(), mAppContext);
+        int type = getItemViewType(position);
+        if(type == R.layout.browse_row) {
+            final MediaInfo item = videos.get(position);
+            MediaMetadata mm = item.getMetadata();
+            viewHolder.setTitle(mm.getString(MediaMetadata.KEY_TITLE));
+            viewHolder.setDescription(mm.getString(MediaMetadata.KEY_SUBTITLE));
+            viewHolder.setImage(mm.getImages().get(0).getUrl().toString(), mAppContext);
+            viewHolder.setHours(mm.getString(VideoProvider.TAG_HOUR), item.getStreamDuration());
 
-        viewHolder.mMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mClickListener.itemClicked(view, item, position);
-            }
-        });
-        viewHolder.mImgView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mClickListener.itemClicked(view, item, position);
-            }
-        });
+            viewHolder.mMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mClickListener.itemClicked(view, item, position);
+                }
+            });
+            viewHolder.mImgView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mClickListener.itemClicked(view, item, position);
+                }
+            });
 
-        viewHolder.mTextContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mClickListener.itemClicked(view, item, position);
-            }
-        });
-        CastSession castSession = CastContext.getSharedInstance(mAppContext).getSessionManager()
-                .getCurrentCastSession();
-        viewHolder.mMenu.setVisibility(
-                (castSession != null && castSession.isConnected()) ? View.VISIBLE : View.GONE);
+            viewHolder.mTextContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mClickListener.itemClicked(view, item, position);
+                }
+            });
+            CastSession castSession = CastContext.getSharedInstance(mAppContext).getSessionManager()
+                    .getCurrentCastSession();
+            viewHolder.mMenu.setVisibility(
+                    (castSession != null && castSession.isConnected()) ? View.VISIBLE : View.GONE);
+        } else {
+            String day = getVideoDay(position+1);
+            viewHolder.setTextDay(day);
+        }
     }
 
 
@@ -104,6 +117,14 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
 
     public List<MediaInfo> getVideos() {
         return videos;
+    }
+
+    public int getItemViewType (int position) {
+        for(int i = 0; i < headerPositions.size(); i++){
+            if(headerPositions.get(i) == position)
+                return R.layout.header_hours;
+        }
+        return R.layout.browse_row;
     }
 
     /**
@@ -119,6 +140,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         private TextView mDescriptionView;
         private NetworkImageView mImgView;
         private ImageLoader mImageLoader;
+        private TextView mTextDay;
+        private TextView mStartHour;
+        private TextView mEndHour;
 
         static ViewHolder newInstance(View parent) {
             NetworkImageView imgView = parent.findViewById(R.id.imageView1);
@@ -126,11 +150,14 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
             TextView descriptionView = parent.findViewById(R.id.textView2);
             View menu = parent.findViewById(R.id.menu);
             View textContainer = parent.findViewById(R.id.text_container);
-            return new ViewHolder(parent, imgView, textContainer, titleView, descriptionView, menu);
+            TextView textDay = parent.findViewById(R.id.textDay);
+            TextView startHout = parent.findViewById(R.id.textStartHour);
+            TextView endHour = parent.findViewById(R.id.textEndHour);
+            return new ViewHolder(parent, imgView, textContainer, titleView, descriptionView, menu, textDay, startHout, endHour);
         }
 
         private ViewHolder(View parent, NetworkImageView imgView, View textContainer, TextView titleView,
-                TextView descriptionView, View menu) {
+                TextView descriptionView, View menu, TextView textDay, TextView startHour, TextView endHour) {
             super(parent);
             mParent = parent;
             mImgView = imgView;
@@ -138,6 +165,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
             mMenu = menu;
             mTitleView = titleView;
             mDescriptionView = descriptionView;
+            mTextDay = textDay;
+            mStartHour = startHour;
+            mEndHour = endHour;
         }
 
         public void setTitle(String title) {
@@ -163,11 +193,80 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         ImageView getImageView() {
             return mImgView;
         }
+
+        void setTextDay(String day) {
+            Calendar calendar = Calendar.getInstance(Locale.getDefault());
+            String[] days = new String[]{"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
+            int today = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+            if(today == 0){
+                today = 6;
+            } else {
+                today = today - 1;
+            }
+            mTextDay.setText(day);
+            if(days[today].equals(day)) {
+                mTextDay.setTextColor(Color.RED);
+            }
+        }
+
+        void setHours(String startHour, long duration) {
+            mStartHour.setText(startHour);
+            mEndHour.setText(getEndHour(startHour, duration/1000));
+        }
+
+        private String getEndHour (String startHour, long duration) {
+            int hour = Integer.parseInt(startHour.split(":")[0]);
+            int minutes = Integer.parseInt(startHour.split(":")[1]);
+
+            long durationMinutes = duration / 60;
+            long durationHours = durationMinutes / 60;
+            durationMinutes = durationMinutes % 60;
+
+            if(minutes + durationMinutes > 59) {
+                durationHours++;
+                durationMinutes = minutes + durationMinutes - 60;
+            }
+
+            if(hour + durationHours > 23) {
+                long diff = hour + durationHours -24;
+                durationHours = diff - hour;
+            }
+
+            String endHour = (hour + durationHours) > 9 ? (hour + durationHours) + "" : "0" + (hour + durationHours);
+            String endMinutes = (minutes + durationMinutes) > 9 ? (minutes + durationMinutes) + "" : "0" + (minutes + durationMinutes);
+            return endHour + ":" + endMinutes;
+        }
     }
 
     void setData(List<MediaInfo> data) {
         videos = data;
+        if(data != null)
+            insertHeadersBetweenHours();
         notifyDataSetChanged();
+    }
+
+    private void insertHeadersBetweenHours() {
+        MediaInfo mediaInfo = VideoProvider.buildMediaInfo("", "", "", 0, "", "", "",
+                "", null, "", "");
+        String[] days = new String[]{"L", "M", "X", "J", "V", "S", "D"};
+        int previousVideoDay = -1;
+        for(int i = 0; i <videos.size() ; i++){
+            int currentVideoDay = VideoProvider.findIndexOf(days, videos.get(i).getMetadata().getString(VideoProvider.TAG_DAY));
+            if(currentVideoDay > previousVideoDay){
+                previousVideoDay = currentVideoDay;
+                videos.add(i, mediaInfo);
+                headerPositions.add(i);
+            }
+        }
+    }
+
+    private String getVideoDay(int position) {
+        String[] daysLetter = new String[]{"L", "M", "X", "J", "V", "S", "D"};
+        String[] days = new String[]{"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
+        String day = videos.get(position).getMetadata().getString(VideoProvider.TAG_DAY);
+
+        int index = VideoProvider.findIndexOf(daysLetter, day);
+        return days[index];
     }
 
     /**

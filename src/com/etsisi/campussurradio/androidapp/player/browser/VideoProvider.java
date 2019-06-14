@@ -56,7 +56,7 @@ public class VideoProvider {
     private static final String TAG_STUDIO = "studio";
     private static final String TAG_SOURCES = "sources";
     private static final String TAG_SUBTITLE = "subtitle";
-    private static final String TAG_DURATION = "duration";
+    public static final String TAG_DURATION = "duration";
     private static final String TAG_TRACKS = "tracks";
     private static final String TAG_TRACK_ID = "id";
     private static final String TAG_TRACK_TYPE = "type";
