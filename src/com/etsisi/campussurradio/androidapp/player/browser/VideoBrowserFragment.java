@@ -37,6 +37,7 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.core.util.Pair;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -89,7 +90,6 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         mAdapter = new VideoListAdapter(this, getContext());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setNestedScrollingEnabled(false);
-        //getLoaderManager().initLoader(0, null, this);
         LoaderManager.getInstance(this).initLoader(0, null, this);
         setHasOptionsMenu(true);
     }
@@ -168,7 +168,13 @@ public class VideoBrowserFragment extends Fragment implements VideoListAdapter.I
         mAdapter.setData(data);
         mLoadingView.setVisibility(View.GONE);
         videos = mAdapter.getVideos();
-        mRecyclerView.getLayoutManager().scrollToPosition(getScrollPosition());
+        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getContext()) {
+            @Override protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+        };
+        smoothScroller.setTargetPosition(getScrollPosition());
+        mRecyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
         mEmptyView.setVisibility(null == data || data.isEmpty() ? View.VISIBLE : View.GONE);
     }
 

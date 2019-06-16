@@ -265,15 +265,27 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
 
     private String getVideoDay(int position) {
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-        int month = calendar.get(Calendar.MONTH);
-        int year = calendar.get(Calendar.YEAR);
         String[] months = new String[]{"enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"};
         String[] daysLetter = new String[]{"L", "M", "X", "J", "V", "S", "D"};
         String[] days = new String[]{"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
         String day = videos.get(position).getMetadata().getString(VideoProvider.TAG_DAY);
-
         int index = VideoProvider.findIndexOf(daysLetter, day);
+
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        if(dayOfWeek == 0){
+            dayOfWeek = 6;
+        } else {
+            dayOfWeek = dayOfWeek - 1;
+        }
+
+        if(dayOfWeek != index) {
+            int diff = index - dayOfWeek;
+            calendar.add(Calendar.DAY_OF_MONTH, diff);
+        }
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+
         return days[index] + ", " + dayOfMonth + " de " + months[month] + " de " + year;
     }
 
