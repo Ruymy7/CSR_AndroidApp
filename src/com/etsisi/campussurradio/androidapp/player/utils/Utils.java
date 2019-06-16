@@ -159,17 +159,17 @@ public class Utils {
      * Show a popup to select whether the selected item should play immediately, be added to the
      * end of queue or be added to the queue right after the current item.
      */
-    public static int showQueuePopup(final Context context, View view, final MediaInfo mediaInfo) {
+    public static void showQueuePopup(final Context context, View view, final MediaInfo mediaInfo) {
         CastSession castSession =
                 CastContext.getSharedInstance(context).getSessionManager().getCurrentCastSession();
         if (castSession == null || !castSession.isConnected()) {
             Log.w(TAG, "showQueuePopup(): not connected to a cast device");
-            return -1;
+            return;
         }
         final RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
         if (remoteMediaClient == null) {
             Log.w(TAG, "showQueuePopup(): null RemoteMediaClient");
-            return -1;
+            return;
         }
         final QueueDataProvider provider = QueueDataProvider.getInstance(context);
         PopupMenu popup = new PopupMenu(context, view);
@@ -234,7 +234,7 @@ public class Utils {
         };
         popup.setOnMenuItemClickListener(clickListener);
         popup.show();
-        return 1;
+        return;
     }
 
     public static MediaQueueItem[] rebuildQueue(List<MediaQueueItem> items) {
@@ -249,7 +249,7 @@ public class Utils {
         return rebuiltQueue;
     }
 
-    private static MediaQueueItem[] rebuildQueueAndAppend(List<MediaQueueItem> items,
+    public static MediaQueueItem[] rebuildQueueAndAppend(List<MediaQueueItem> items,
             MediaQueueItem currentItem) {
         if (items == null || items.isEmpty()) {
             return new MediaQueueItem[]{currentItem};

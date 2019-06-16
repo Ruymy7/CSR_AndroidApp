@@ -22,10 +22,19 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.etsisi.campussurradio.androidapp.player.expandedcontrols.ExpandedControlsActivity;
+import com.etsisi.campussurradio.androidapp.player.queue.QueueDataProvider;
 import com.etsisi.campussurradio.androidapp.player.utils.Utils;
 import com.google.android.gms.cast.MediaInfo;
 import com.etsisi.campussurradio.androidapp.player.R;
 import com.etsisi.campussurradio.androidapp.player.browser.VideoProvider;
+import com.google.android.gms.cast.MediaQueueItem;
+import com.google.android.gms.cast.MediaStatus;
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastSession;
+import com.google.android.gms.cast.framework.media.RemoteMediaClient;
+
+import java.util.List;
 
 public class LiveRadio extends Fragment {
 
@@ -39,10 +48,16 @@ public class LiveRadio extends Fragment {
     private ImageView image_volume;
     private String media = "http://server10.emitironline.com:10288/stream";
     private MediaInfo item;
+    private ContentObserver contentObserver;
     private int lastVolume = 0;
     private LiveRadioPlayer player = null;
     private LiveRadioPlayer.LocalBinder binder = null;
     private Intent playerIntent;
+    private QueueDataProvider provider;
+    private boolean isPlayingRemotely = false;
+    private int itemid = -1;
+    private CastSession castSession;
+    private RemoteMediaClient remoteMediaClient;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -52,10 +67,17 @@ public class LiveRadio extends Fragment {
 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getCast();
         playerIntent = new Intent(getContext(), LiveRadioPlayer.class);
         getContext().bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         setHasOptionsMenu(true);
         createMediaInfo();
+    }
+
+    private void getCast() {
+        castSession = CastContext.getSharedInstance(getContext()).getSessionManager().getCurrentCastSession();
+        if(castSession != null)
+            remoteMediaClient = castSession.getRemoteMediaClient();
     }
 
     //Binding this Client to the AudioPlayer Service
@@ -76,7 +98,16 @@ public class LiveRadio extends Fragment {
     };
 
     private void getButtons() {
-        Log.d(TAG, "getButtons: "+ player);
+        provider = QueueDataProvider.getInstance(getContext());
+        List<MediaQueueItem> queueList =  provider.getItems();
+        for(int i = 0; i < queueList.size(); i++) {
+            MediaQueueItem item = queueList.get(i);
+            if(item != null && item.getMedia().getMetadata().getString(VideoProvider.TAG_VIDEO_URL).equals(media)) {
+                itemid = item.getItemId();
+                if(remoteMediaClient.isPlaying() && remoteMediaClient.getCurrentItem().getMedia().getMetadata().getString(VideoProvider.TAG_VIDEO_URL).equals(media))
+                    isPlayingRemotely = true;
+            }
+        }
         playButton = getView().findViewById(R.id.play_button);
         pauseButton = getView().findViewById(R.id.pause_button);
         volumeBar = getView().findViewById(R.id.volume_bar);
@@ -97,7 +128,7 @@ public class LiveRadio extends Fragment {
             image_mute.setVisibility(View.GONE);
         }
 
-        if(!player.isPlaying()){
+        if(!player.isPlaying() && !isPlayingRemotely){
             textView.setTextColor(getResources().getColor(R.color.black));
             playButton.setVisibility(View.VISIBLE);
             pauseButton.setVisibility(View.GONE);
@@ -163,7 +194,7 @@ public class LiveRadio extends Fragment {
             }
         });
 
-        getContext().getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, new ContentObserver(new Handler()) {
+       contentObserver = new ContentObserver(new Handler()) {
             @Override
             public boolean deliverSelfNotifications() {
                 return false;
@@ -182,23 +213,45 @@ public class LiveRadio extends Fragment {
                     image_mute.setVisibility(View.GONE);
                 }
             }
-        });
+        };
+
+        getContext().getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, contentObserver);
     }
 
     private void play() {
         Log.d(TAG, "play: ");
-        Toast.makeText(getContext(), R.string.loading, Toast.LENGTH_SHORT).show();
-        if (!player.isPlaying()) {
-            int state = Utils.showQueuePopup(getActivity(), getView().findViewById(R.id.play_button), item);
-            if(state == -1) {
+        getCast();
+        if(itemid != -1 ) { // Si el streaming está en la cola pero no se esta reproduciendo, salta a él
+            if(remoteMediaClient != null) {
+                remoteMediaClient.queueJumpToItem(itemid, null);
+                remoteMediaClient.play();
+                setPlay();
+            }
+        } else if (!player.isPlaying()) {
+            if(remoteMediaClient != null) {
+                isPlayingRemotely = true;
+                MediaQueueItem queueItem = new MediaQueueItem.Builder(item).setAutoplay(true).setPreloadTime(5).build();
+                MediaQueueItem[] newItemArray = new MediaQueueItem[]{queueItem};
+                if (provider.isQueueDetached() && provider.getCount() > 0) {
+                    MediaQueueItem[] items = Utils.rebuildQueueAndAppend(provider.getItems(), queueItem);
+                    remoteMediaClient.queueLoad(items, provider.getCount(), MediaStatus.REPEAT_MODE_REPEAT_OFF, null);
+                } else if (provider.getCount() == 0) {
+                    remoteMediaClient.queueLoad(newItemArray, 0, MediaStatus.REPEAT_MODE_REPEAT_OFF, null);
+                } else {
+                    int currentId = provider.getCurrentItemId();
+                    remoteMediaClient.queueInsertAndPlayItem(queueItem, currentId, null);
+                }
+                Intent intent = new Intent(getContext(), ExpandedControlsActivity.class);
+                getContext().startActivity(intent);
+                setPlay();
+            } else {
                 playButton.setVisibility(View.GONE);
                 pauseButton.setVisibility(View.VISIBLE);
                 textView.setTextColor(getResources().getColor(R.color.red));
                 playerIntent.putExtra("media", media);
                 playerIntent.setAction(LiveRadioPlayer.STARTPLAYING);
                 getContext().startService(playerIntent);
-            } else {
-                setPlay();
+                Toast.makeText(getContext(), R.string.loading, Toast.LENGTH_SHORT).show();
             }
         } else {
             Log.d(TAG, "play: Player is already running");
@@ -206,7 +259,16 @@ public class LiveRadio extends Fragment {
     }
 
     private void pause() {
-        player.onDestroy();
+        if(isPlayingRemotely) {
+            if(remoteMediaClient != null) {
+                remoteMediaClient.pause();
+                itemid = provider.getCurrentItemId();
+            } else {
+                Toast.makeText(player, "No se ha podido pausar", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            player.onDestroy();
+        }
         setPause();
     }
 
@@ -218,13 +280,13 @@ public class LiveRadio extends Fragment {
 
     void setPlay() {
         playButton.setVisibility(View.GONE);
-        pauseButton.setVisibility(View.GONE);
+        pauseButton.setVisibility(View.VISIBLE);
         textView.setTextColor(getResources().getColor(R.color.red));
     }
 
     private void createMediaInfo() {
         item = VideoProvider.buildMediaInfo("Campus Sur Radio", "Campus Sur Radio", "En directo",
-                0, media, "audio/mpeg", "http://iaas92-43.cesvima.upm.es:2019/api/thumbnails/icon.png",
+                0, media, "audio/mpeg", "http://iaas92-43.cesvima.upm.es:2019/api/thumbnails/smallIcon.png",
                 "http://iaas92-43.cesvima.upm.es:2019/api/thumbnails/icon.png", null, "", "");
     }
 
@@ -236,6 +298,7 @@ public class LiveRadio extends Fragment {
             player = null;
             serviceConnection = null;
         }
+        getContext().getContentResolver().unregisterContentObserver(contentObserver);
         super.onDestroy();
     }
 }

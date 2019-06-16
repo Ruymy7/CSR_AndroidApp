@@ -48,7 +48,7 @@ public class VideoProvider {
     private static final String TAG_MP4 = "mp4";
     private static final String TAG_IMAGES = "images";
     private static final String TAG_VIDEO_TYPE = "type";
-    private static final String TAG_VIDEO_URL = "url";
+    public static final String TAG_VIDEO_URL = "url";
     private static final String TAG_VIDEO_MIME = "mime";
 
     private static final String TAG_CATEGORIES = "categories";
@@ -172,7 +172,10 @@ public class VideoProvider {
                 }
             }
         }
-        return sort(mediaList);
+        if(null != mediaList)
+            return sort(mediaList);
+        else
+            return mediaList;
     }
 
     public static MediaInfo buildMediaInfo(String title, String studio, String subTitle,
@@ -184,6 +187,7 @@ public class VideoProvider {
         movieMetadata.putString(TAG_HOUR, hour);
         movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, studio);
         movieMetadata.putString(MediaMetadata.KEY_TITLE, title);
+        movieMetadata.putString(TAG_VIDEO_URL, url);
         movieMetadata.addImage(new WebImage(Uri.parse(imgUrl)));
         movieMetadata.addImage(new WebImage(Uri.parse(bigImageUrl)));
         JSONObject jsonObj = null;

@@ -138,39 +138,40 @@ public class QueueListAdapter extends RecyclerView.Adapter<QueueListAdapter.Queu
         holder.mStopUpcoming.setOnClickListener(mItemViewOnClickListener);
 
         MediaInfo info = item.getMedia();
-        MediaMetadata metaData = info.getMetadata();
-        holder.mTitleView.setText(metaData.getString(MediaMetadata.KEY_TITLE));
-        holder.mDescriptionView.setText(metaData.getString(MediaMetadata.KEY_SUBTITLE));
-        if (!metaData.getImages().isEmpty()) {
+        MediaMetadata metaData = info != null ? info.getMetadata() : null;
+        if(metaData != null) {
+            holder.mTitleView.setText(metaData.getString(MediaMetadata.KEY_TITLE));
+            holder.mDescriptionView.setText(metaData.getString(MediaMetadata.KEY_SUBTITLE));
+            if (!metaData.getImages().isEmpty()) {
 
-            String url = metaData.getImages().get(0).getUrl().toString();
-            mImageLoader = CustomVolleyRequest.getInstance(mAppContext)
-                    .getImageLoader();
-            mImageLoader.get(url, ImageLoader.getImageListener(holder.mImageView, 0, 0));
-            holder.mImageView.setImageUrl(url, mImageLoader);
+                String url = metaData.getImages().get(0).getUrl().toString();
+                mImageLoader = CustomVolleyRequest.getInstance(mAppContext)
+                        .getImageLoader();
+                mImageLoader.get(url, ImageLoader.getImageListener(holder.mImageView, 0, 0));
+                holder.mImageView.setImageUrl(url, mImageLoader);
 
-        }
-
-        holder.mDragHandle.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
-                    mDragStartListener.onStartDrag(holder);
-                }
-                return false;
             }
-        });
 
-        if (item == mProvider.getCurrentItem()) {
-            holder.updateControlsStatus(QueueItemViewHolder.CURRENT);
-            updatePlayPauseButtonImageResource(holder.mPlayPause);
-        } else if (item == mProvider.getUpcomingItem()) {
-            holder.updateControlsStatus(QueueItemViewHolder.UPCOMING);
-        } else {
-            holder.updateControlsStatus(QueueItemViewHolder.NONE);
-            holder.mPlayPause.setVisibility(View.GONE);
+            holder.mDragHandle.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent event) {
+                    if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
+                        mDragStartListener.onStartDrag(holder);
+                    }
+                    return false;
+                }
+            });
+
+            if (item == mProvider.getCurrentItem()) {
+                holder.updateControlsStatus(QueueItemViewHolder.CURRENT);
+                updatePlayPauseButtonImageResource(holder.mPlayPause);
+            } else if (item == mProvider.getUpcomingItem()) {
+                holder.updateControlsStatus(QueueItemViewHolder.UPCOMING);
+            } else {
+                holder.updateControlsStatus(QueueItemViewHolder.NONE);
+                holder.mPlayPause.setVisibility(View.GONE);
+            }
         }
-
     }
 
     private void updatePlayPauseButtonImageResource(ImageButton button) {
