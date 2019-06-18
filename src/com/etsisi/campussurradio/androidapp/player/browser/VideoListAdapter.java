@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/*
+ * Modified by Padrón Castañeda, Ruymán
+ * Final degree work
+ * ETSISI (UPM), Madrid 2019
+ */
+
 package com.etsisi.campussurradio.androidapp.player.browser;
 
 import android.content.Context;
@@ -152,9 +158,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
             View menu = parent.findViewById(R.id.menu);
             View textContainer = parent.findViewById(R.id.text_container);
             TextView textDay = parent.findViewById(R.id.textDay);
-            TextView startHout = parent.findViewById(R.id.textStartHour);
+            TextView startHour = parent.findViewById(R.id.textStartHour);
             TextView endHour = parent.findViewById(R.id.textEndHour);
-            return new ViewHolder(parent, imgView, textContainer, titleView, descriptionView, menu, textDay, startHout, endHour);
+            return new ViewHolder(parent, imgView, textContainer, titleView, descriptionView, menu, textDay, startHour, endHour);
         }
 
         private ViewHolder(View parent, NetworkImageView imgView, View textContainer, TextView titleView,

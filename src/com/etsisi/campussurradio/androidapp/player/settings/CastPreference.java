@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/*
+ * Modified by Padrón Castañeda, Ruymán
+ * Final degree work
+ * ETSISI (UPM), Madrid 2019
+ */
+
 package com.etsisi.campussurradio.androidapp.player.settings;
 
 import com.etsisi.campussurradio.androidapp.player.utils.Utils;
