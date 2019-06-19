@@ -3,6 +3,8 @@ Aplicación para la reproducción de contenido de Campus Sur Radio y permitir su
 
 Aplicación creada a partir de la aplicación existente [CastVideos-android](https://github.com/googlecast/CastVideos-android)
 
+## Trabajo fin de Grado <br> Padrón Castañeda, Ruymán
+
 ## Dependencies
 * [Android Volley library](https://github.com/google/volley)
 
