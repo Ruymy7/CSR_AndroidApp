@@ -96,7 +96,6 @@ public class LiveRadio extends Fragment {
             remoteMediaClient = castSession.getRemoteMediaClient();
     }
 
-    //Binding this Client to the AudioPlayer Service
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {

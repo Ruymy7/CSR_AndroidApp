@@ -121,18 +121,15 @@ public class LiveRadioPlayer extends Service implements MediaPlayer.OnPreparedLi
     private void initMediaPlayer() {
         Log.d(TAG, "initMediaPlayer: ");
         mediaPlayer = new MediaPlayer();
-        //Set up MediaPlayer event listeners
         mediaPlayer.setOnErrorListener(this);
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnBufferingUpdateListener(this);
         mediaPlayer.setOnSeekCompleteListener(this);
         mediaPlayer.setOnInfoListener(this);
-        //Reset so that the MediaPlayer is not pointing to another data source
         mediaPlayer.reset();
         notificationManagerCompat = NotificationManagerCompat.from(this);
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
-            // Set the data source to the mediaFile location
             mediaPlayer.setDataSource(URL);
         } catch (IOException e) {
             e.printStackTrace();
@@ -172,12 +169,8 @@ public class LiveRadioPlayer extends Service implements MediaPlayer.OnPreparedLi
 
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        //Invoked indicating buffering status of
-        //a media resource being streamed over the network.
     }
 
-
-    //Handle errors
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         return false;
@@ -185,7 +178,6 @@ public class LiveRadioPlayer extends Service implements MediaPlayer.OnPreparedLi
 
     @Override
     public boolean onInfo(MediaPlayer mp, int what, int extra) {
-        //Invoked to communicate some info.
         return false;
     }
 
@@ -196,7 +188,6 @@ public class LiveRadioPlayer extends Service implements MediaPlayer.OnPreparedLi
 
     @Override
     public void onSeekComplete(MediaPlayer mp) {
-        //Invoked indicating the completion of a seek operation.
     }
 
     @Override
